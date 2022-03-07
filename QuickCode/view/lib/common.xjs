@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Script version="1.0" type="xscript5.1"><![CDATA[//모델 정보
+var oFieldArray;
+	
+//뷰 컴포넌트 정보
+var oContents;
+	
+//뷰 옵션 설정 정보
+var oGenerationAttr;
+
+//컴포넌트 ID 목록
+var arrCompIds = [];
+
+//컴포넌트 + 바인드 Field 목록
+var arrBindItems = [];]]></Script>
