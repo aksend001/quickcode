@@ -1,0 +1,728 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ViewTemplateInfo version="1.0">
+  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="영역형 그래프(Area Chart)를 그려주는 템플릿"/>
+  <Script version="1.0" type="xscript5.1"><![CDATA[/*============================================================================================*
+o File Name   : 
+o Developer   : 
+o Create Date : 
+o Description : 
+*============================================================================================*/
+include "view_lib::chart.xjs";
+
+var oBaseChartAttr =	{
+							"id" : "chtBasic", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
+							//, "binddataset" : "viewdataset"
+							, "binddataset" : "dsData"
+						};
+var oBaseTitle = 		{
+							  "id"					: "title"
+							, "textfont"			: "20pt/normal '맑은 고딕'"
+							, "padding"				: "0px 0px 5px"
+							, "subtextcolor"		: "gray"
+							, "subtextfont"			: "italic 8/normal 'Arial'"
+						};
+var oBaseTooltip =		{
+							  "id"					: "tooltip"
+							, "background"			: "#4b4b4b"
+							, "linestyle"			: "0px none"
+							, "textcolor"			: "white"
+							, "textfont"			: "10pt/normal '맑은 고딕'"
+							, "padding"				: "5px"
+						};
+var oBaseBoard =		{
+							  "id"					: "board"
+						};
+
+var oBaseLegend = 		{
+							  "id" : "legend"
+							, "padding" : "3px 10px 3px 10px"
+							, "itemtextfont" : "9pt '맑은 고딕'"
+							, "itemtextcolor" : "#4c4c4c"
+							, "itemautofit" : "true"
+							, "markertextgap" : "5"
+							, "markertype" : "circle"
+							, "verticalitemgap" : "5"
+							, "linestyle" : "1px dashed #4c4c4c"
+						};
+var oBaseCategoryaxis =	{
+							  "id" 					: "categoryaxis"
+							, "titletextcolor"		: "#4c4c4c"
+							, "titletextfont"		: "bold 12pt '맑은 고딕'"
+							, "labeltextcolor"		: "#6f6f6f"
+							, "labeltextfont"		: "9pt '맑은 고딕'"
+							, "axislinestyle"		: "1px solid #525252"
+							, "ticklinestyle"		: "1px solid #525252"
+							, "boardlinestyle"		: "1px solid #d0d0d0"
+							, "ticksize"			: "5"
+							, "labelgap"			: "5"
+							, "labelrotate"			: "-30"
+						};
+var oBaseValueaxis =	{
+							  "id" 					: "valueaxis"
+							, "boardlinevisible"	: true
+							, "boardlinestyle" 		: "1px solid #d0d0d0"
+							, "labeltextcolor" 		: "#6f6f6f"
+							, "labeltextfont" 		: "9pt/normal '맑은 고딕'"
+							, "titletextcolor" 		: "#4c4c4c"
+							, "titletextfont" 		: "bold 12pt '맑은 고딕'"
+							, "ticklinestyle" 		: "1px solid #525252"
+							, "axislinestyle" 		: "1px solid #525252"
+							, "labelgap" 			: "5"
+							, "ticksize" 			: "5"
+							//, "autotickscale"		: "10"
+						};
+var oBaseAreaSeries =	{
+							  "barvisible" 			: false
+							, "linevisible" 		: true
+							, "lineareavisible"		: true
+							, "lineareaopacity"		: "0.5"
+						};
+//////////////////////////////상수 설정부 START ////////////////////////////////////////////////////
+//////////////////////////////상수 설정부 END ////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------------------*
+ * Function    : fn_GetViewGenerationResult
+ * Parameter   : 
+ *               - fieldarray     : model field list
+ *               - contents       : old contents (include <View>)
+ *               - generationattr : attributes for view generation
+ * Return      : View contents (source + script) (JSON format)
+                 ex) {
+                        "View": {
+                            "tag": "View",
+                            "attribute": {
+                                "id": "View00",
+                                "viewtype": "FreeForm",
+                                "taborder": "2",
+                                "text": "search view",
+                                "left": "0",
+                                ...
+                            },
+                            "Model": [
+                                {   // with field
+                                    "fieldid": "department",
+                                    "Components": [
+                                    ...
+                                    ]
+                                },
+                                {   // without field
+                                    "fieldid": "",
+                                    "Components": [
+                                    ...
+                                    ]
+                                }
+                            ],
+                            "InitValue": [
+                            ],
+                            "Objects": [
+                            ],
+                            "Bind": [
+                            ],
+                            "Script": {
+                                "tag": "Script",
+                                "attribute": {
+                                },
+                                "value": ""
+                            }
+                        }
+                    }
+ * Description : Generate the view based on the model field and return the results.
+ *---------------------------------------------------------------------------------------------*
+ *                            !!! This is a required function. !!!                             *
+ *                            !!! Do not delete it. !!!                                        *
+ *---------------------------------------------------------------------------------------------*/
+fn_GetViewGenerationResult = function(fieldarray, contents, generationattr) {
+
+	//리턴 값
+    var vResult = "";
+
+    //trace(">> fieldarray : " + fieldarray);
+	//trace(">> contents : " + contents);
+    //trace(">> generationattr : " + generationattr);
+
+    //모델정보를 JSON 오브젝트로 설정
+    if(fieldarray)oFieldArray = JSON.parse(fieldarray);
+
+	//뷰 컴포넌트 정보를 JSON 오브젝트로 설정
+    if(contents)oContents = JSON.parse(contents);
+
+	//옵션 설정 정보를 JSON 오브젝트로 설정
+    if(generationattr)oGenerationAttr = JSON.parse(generationattr);
+
+	//모델정보 초기화
+	oContents.View.Model = [];
+
+	//모델정보 생성 함수 호출
+	fn_GetModel();
+
+	//InitValue 정보 생성 함수 호출
+    oContents.View.InitValue = fn_GetInitValue();
+
+	//Object 정보 생성 함수 호출
+    oContents.View.Objects = fn_GetObjects();
+
+	//Script 정보 생성 함수 호출
+    oContents.View.Script = fn_GetScript();
+
+	//뷰 컴포넌트 정보를 String으로 변환
+    vResult = JSON.stringify(oContents, null, "\t");
+
+    //trace(">> vResult : " + vResult);
+    //뷰 컴포넌트 정보 리턴
+    return vResult;
+};
+
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetViewAttributeList
+ * Return       : View generation attribute list (JSON format)
+                  ex)   {
+                        "attributecount": "2",
+                        "attributes": [
+                           {
+                                "id": "use_triggerbutton",
+                                "edittype": "Boolean",              // edittype : Boolean/String/Number/Enum/ViewObjList
+                                "defaultvalue": "true",
+                                "description": "Specifies whether trigger button is auto-created or not"
+                            },
+                            {
+                                "id": "triggerbuttontext",
+                                "edittype": "String",               // edittype : Boolean/String/Number/Enum/ViewObjList
+                                "defaultvalue": "Search",
+                                "description": "Enter text for trigger button"
+                            }
+                        ]
+                    }
+ * Description : Obtain a list of custom attributes required for view generation
+ *---------------------------------------------------------------------------------------------*/
+fn_GetViewAttributeList = function() {
+
+    var sViewAttr = "";
+    var oViewAttr = {
+                        "attributes": [
+							{
+                                "id": "chartdisplay",
+                                "edittype": "Enum",
+                                "defaultvalue": "grouped",
+                                "enumlist" : ["grouped", "stacked", "100%stacked"],
+                                "description": "차트의 유형을 설정."
+												+ "\n" + " - grouped : 영역형 차트"
+												+ "\n" + " - stacked : 누적 영역형 차트"
+												+ "\n" + " - 100%stacked : 100% 기준 누적 영역형 차트"
+                            }
+							, {
+                                "id": "linetype",
+                                "edittype": "Enum",
+                                "defaultvalue": "segment",
+                                "enumlist" : ["segment", "step", "curve"],
+                                "description": "영역차트 모양 설정"
+												+ "\n" + " - segment : 꺽은선 차트"
+												+ "\n" + " - step : 스텝 차트"
+												+ "\n" + " - curve : 곡선 차트"
+                            }
+							, {									
+                                "id": "enableanimation",									
+                                "edittype": "Boolean",              // edittype : Boolean/String/Number/Enum/ViewObjList									
+                                "defaultvalue": "true",									
+                                "description": "Series 에 애니메이션 효과를 적용 시킬지 설정"									
+                            }
+							, {									
+                                "id": "titletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "타이틀 Text"									
+                            }
+							, {									
+                                "id": "subtitletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "서브타이틀 Text"									
+                            }
+							, {
+                                "id": "titlealign",
+                                "edittype": "Enum",
+                                "defaultvalue": "topcenter",
+                                "enumlist" : ["topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
+                                "description": "타이틀 표시 위치"
+                            }
+							, {
+                                "id": "legendposition",
+                                "edittype": "Enum",
+                                "defaultvalue": "rightcenter",
+                                "enumlist" : ["none", "topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
+                                "description": "범례 표시 위치"
+                            }
+							, {
+                                "id": "itemtextposition",
+                                "edittype": "Enum",
+                                "defaultvalue": "none",
+                                "enumlist" : ["none", "start", "middle", "end", "outside"],
+                                "description": "값 표시 위치"
+                            }
+                        ]
+                  };
+				  
+	oViewAttr["attributecount"] = oViewAttr["attributes"].length;
+
+	sViewAttr = JSON.stringify(oViewAttr, null, "\t");
+    return sViewAttr;
+};
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetFieldUserAttributeList
+ * Return       : user attribute list from model field(JSON format)
+                  ex)   {
+                        "attributecount": "2",
+                        "attributes": [
+                           {
+                                "id": "use_triggerbutton",
+                                "edittype": "Boolean",              // edittype : Boolean/String/Number/Enum/ViewObjList
+                                "defaultvalue": "true",
+                                "description": "Specifies whether trigger button is auto-created or not"
+                            },
+                            {
+                                "id": "triggerbuttontext",
+                                "edittype": "String",               // edittype : Boolean/String/Number/Enum/ViewObjList
+                                "defaultvalue": "Search",
+                                "description": "Enter text for trigger button"
+                            }
+                        ]
+                    }
+ * Description  : Obtain a list of user attributes to register in model field
+ *---------------------------------------------------------------------------------------------*/
+fn_GetFieldUserAttributeList = function ()
+{
+	var sFieldAttr = "";
+
+	var oFieldAttr = {
+                        "attributes": [
+                            {
+                                "id": "displaytype",
+                                "edittype": "Enum",
+								"enumlist" : ["category", "series"],
+                                "defaultvalue": "series",
+                                "description": "데이터 표현방식"
+                            }
+							, {
+                                "id": "valueaxes",
+                                "edittype" : "Enum",
+								"enumlist" : ["y", "y1", "y2"],
+								"defaultvalue" : "y",
+                                "description" : "데이터축을 설정. y는 왼쪽, y1,y2는 오른쪽에 표시됨."
+                            }
+							, {
+                                "id": "stackedgroupname",
+                                "edittype" : "String",
+								"defaultvalue" : "",
+                                "description" : "누적(stacked) 차트에서 그룹핑하는 경우 명칭 설정.(chartdisplay이 'stacked','100%stacked'인 경우에만 동작)"
+                            }
+// 							,{
+//                                 "id": "datatype",
+//                                 "edittype" : "Enum",
+// 								"enumlist" : ["normal", "number", "text", "currency"],
+// 								"defaultvalue" : "normal",
+//                                 "description" : "Field의 편집형식을 설정합니다."
+//                             }
+                        ]
+                  };
+				  
+	oFieldAttr["attributecount"] = oFieldAttr["attributes"].length;
+
+ 	sFieldAttr = JSON.stringify(oFieldAttr, null, "\t");
+
+    return sFieldAttr;
+}
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetModel
+ * Parameter    :
+ *                - oFieldArray : model field data
+ *                - oContents : view contents
+ *                - oGenerationAttr : attributes for view generation
+ * Return       : model contents (JSON format)
+ * Description  : Function to generate a component source based on field information of the model entered by the user
+ *---------------------------------------------------------------------------------------------*/
+fn_GetModel = function(){
+
+	// Chart Attribute
+	var oChartAttr = {};
+	var oTitle = {};
+	var oLegend = {};
+	
+	var sChartDisplay = oGenerationAttr.attributes.chartdisplay;
+	var sLineType = oGenerationAttr.attributes.linetype;
+	var sTitletext = oGenerationAttr.attributes.titletext;
+	var sSubTitletext = oGenerationAttr.attributes.subtitletext;
+	var sTitleAlign = oGenerationAttr.attributes.titlealign;
+	var sLegendPosition = oGenerationAttr.attributes.legendposition;
+	
+	//모델 필드 갯수 가져오기
+    var nFieldCount = oFieldArray.fieldcount;
+	
+	// 카테고리 필드 ID
+	var sCategoryId;
+	
+	var arrField = new Array(); 
+	var arrSeriesField = new Array();
+	var arrAxisY1Field = new Array();
+	var arrAxisY2Field = new Array();
+
+	var sDisplaytype, sValueaxes;
+	
+	//차트에서 사용할 모델 Field ID 리스트 만들기
+    for(i=0;i<nFieldCount;i++)
+    {
+        oField = oFieldArray.fields[i];
+		sDisplaytype = oField.displaytype;
+		sValueaxes = oField.valueaxes;
+		
+		// oFieldArray Json Data로 Field Array() 셋팅
+		arrField.push(oField.id);
+		
+		// displaytype에 따라 Array() 셋팅
+		if (sDisplaytype == "category") {
+			if (sCategoryId == undefined) {
+				sCategoryId = oField.id;
+			} else {
+				fn_Log("category가 여러개 설정되었습니다.","warn");
+			}
+			
+		} else if (sDisplaytype == "series") {
+			arrSeriesField.push(oField);
+			
+			// valueaxes에 따라 Y축 Array() 셋팅
+			if (sValueaxes == "y1") {
+				arrAxisY1Field.push(oField);
+			} else if (sValueaxes == "y2") {
+				arrAxisY2Field.push(oField);
+			}
+		}
+    }
+	
+	// 차트 기본속성 셋팅
+	fn_CopyObject(oChartAttr,oBaseChartAttr);
+	
+	// 차트유형설정
+	if (sChartDisplay == "stacked") {
+		oChartAttr["stacktype"] = "normal";
+	} else if (sChartDisplay == "100%stacked") {
+		oChartAttr["stacktype"] = "percent";
+	}
+	
+	// 선유형설정
+	oBaseAreaSeries["linetype"] = sLineType;
+	
+	
+	// 에니메이션 설정
+	oChartAttr["enableanimation"] = oGenerationAttr.attributes.enableanimation;
+	
+	// 타이틀설정
+	if (sTitletext != undefined || sSubTitletext != undefined) {
+		fn_CopyObject(oTitle,oBaseTitle);
+		oTitle["text"] = sTitletext;
+		oTitle["subtext"] = sSubTitletext;
+		oTitle["align"] = sTitleAlign;
+	}
+				
+	// 범례 설정
+	if (sLegendPosition != "none")
+	{
+		fn_CopyObject(oLegend,oBaseLegend);
+		oLegend["align"] = sLegendPosition;
+	}
+	
+	// 카테고리 설정
+	if (sCategoryId == undefined) {
+		fn_Log("category가 설정되지 않았습니다.","warn");
+	} else {
+		oChartAttr["categorycolumn"] = "bind:" + sCategoryId;
+	}
+	
+	//차트 컴포넌트 추가
+	var oModel = oContents.View.Model;
+    oModel[oModel.length] = {
+            "fieldid" : arrField.join(","),
+            "Components" :
+            [
+                {
+                    "tag" : "BasicChart",
+                    "attribute" : oChartAttr,
+                    "BasicChart" :
+                    [
+                        {
+                            "tag"	: "Contents",
+							"value"	: {
+								"title" 		: oTitle,
+								"legend" 		: oLegend,
+								"tooltip" 		: oBaseTooltip,
+								"board" 		: oBaseBoard,
+								"categoryaxis" 	: oBaseCategoryaxis,
+								"valueaxes" 	: fn_GetValueAxes(arrAxisY1Field,arrAxisY2Field),
+								"seriesset" 	: fn_GetSeries(arrSeriesField)
+							}
+                        }
+                    ]
+                }
+            ]
+        }
+
+	//생성할 Model 정보 리턴
+    return oModel;
+};
+
+// 데이터 축 설정
+fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
+{
+	var arrValueAxes = new Array();
+	var oValueAxes;
+	
+	var oField;
+	
+	// TODO : 축관련 설정이 들어가면 수정필요.
+	
+	// 기본y축 추가
+	oValueAxes = {};
+	fn_CopyObject(oValueAxes,oBaseValueaxis);
+	oValueAxes["id"] = "valueaxis" + "y";
+	arrValueAxes.push(oValueAxes);
+	
+	// Y1추가
+	if (arrAxisY1Field.length > 0) {
+		oValueAxes = {};
+		fn_CopyObject(oValueAxes,oBaseValueaxis);
+		oValueAxes["id"] = "valueaxis" + "y1";
+		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
+		arrValueAxes.push(oValueAxes);
+	}
+	
+	// Y2추가
+	if (arrAxisY2Field.length > 0) {
+		oValueAxes = {};
+		fn_CopyObject(oValueAxes,oBaseValueaxis);
+		oValueAxes["id"] = "valueaxis" + "y2";
+		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
+		arrValueAxes.push(oValueAxes);
+	}
+
+    return arrValueAxes;
+}
+
+// 시리즈 셋팅
+fn_GetSeries = function(arrSeriesField)
+{
+	var sItemTextPosition = oGenerationAttr.attributes.itemtextposition;
+	var sChartDisplay = oGenerationAttr.attributes.chartdisplay;
+	
+	var arrSeries = new Array();
+	var oSeries;
+	
+	var oField;
+	
+	var nCount = arrSeriesField.length;
+	
+	// layered 차트일때 사이즈 셋팅용.
+	var nBarSizeMax = 80;
+	var nBarSizeMin = 20;
+	var nBarSizeGap = nexacro.round((nBarSizeMax - nBarSizeMin) / nCount);
+
+	//Model Field의 갯수 기준으로 Column 태그 생성
+	for(var i=0;i<nCount;i++)
+	{
+		oField = arrSeriesField[i];
+		
+		oSeries = {};
+		fn_CopyObject(oSeries,oBaseAreaSeries);
+		oSeries["id"] = "series" + oField.id;
+		oSeries["titletext"] = oField.label;
+		oSeries["valuecolumn"] = "bind:" + oField.id;
+		
+		// 데이터 출력설정
+		if (sItemTextPosition == "none") {
+			oSeries["itemtextvisible"] = false;
+		} else {
+			oSeries["itemtextvisible"] = true;
+			//oSeries["itemtexttype"] = oField.datatype;
+			oSeries["baritemtextposition"] = sItemTextPosition;
+		}
+		
+		// Y축설정
+		if (oField.valueaxes == "y1") {
+			oSeries["valueaxis"] = "valueaxisy1";
+		} else if (oField.valueaxes == "y2") {
+			oSeries["valueaxis"] = "valueaxisy2";
+		}
+		
+		// 라인에 점을 표시할지 여부
+		oSeries["pointvisible"] = oField.visiblepoint;
+		
+		arrSeries.push(oSeries);
+	}
+	
+    return arrSeries;
+}
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetInitValue
+ * Parameter    :
+ *                - oFieldArray : model field data
+ *                - oContents : view contents
+ *                - oGenerationAttr : attributes for view generation
+ * Return       : initvalue contents (JSON format)
+ * Description  : Function to generate <InitValue> source
+ *---------------------------------------------------------------------------------------------*/
+fn_GetInitValue = function(){
+
+    var oInitValue = [];
+    /*
+    oInitValue =
+    [
+        {
+            "tag" : "initValue",
+            "initValue" :
+            [
+                {
+                    "tag" : "Button",
+                    "attribute" :
+                    {
+                        "id" : "btnSearch", "text" : "Search11"
+                    }
+                }
+            ]
+        }
+    ];
+    */
+    return oInitValue;
+};
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetObjects
+ * Parameter    :
+ *                - oFieldArray : model field data
+ *                - oContents : view contents
+ *                - oGenerationAttr : attributes for view generation
+ * Return       : objects contents (JSON format)
+ * Description  : Function to generate <Objects> source
+ *---------------------------------------------------------------------------------------------*/
+fn_GetObjects = function(){
+
+	//오브젝트 정보 초기화
+    var oObjects = [];
+
+	//오브젝트 정보 설정
+    oObjects =
+    [
+        {
+            "tag": "Dataset",
+            "attribute": { "id": "viewdataset" },
+            "Dataset": [
+                {
+                    "tag": "ColumnInfo",
+                    "attribute": {},
+					//데이터셋 컬럼정보 설정함수 호출
+                    "ColumnInfo": fn_GetDsColumns()
+                },
+                {
+                    "tag": "Rows",
+                    "attribute": {},
+					//데이터셋 로우정보 설정함수 호출
+                    "Rows": fn_GetDsRows()
+                }
+            ]
+        }
+    ];
+
+    return oObjects;
+};
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetScript
+ * Parameter    :
+ *                - oFieldArray : model field data
+ *                - oContents : view contents
+ *                - oGenerationAttr : attributes for view generation
+ * Return       : script contents (JSON format)
+ * Description  : Function to generate <Script> source
+ *---------------------------------------------------------------------------------------------*/
+fn_GetScript = function(){
+
+	//스크립트 정보 초기화
+    var oScript = {};
+
+	//스크립트 정보 리턴
+    return oScript;
+};
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetDsColumns
+ * Parameter    :
+ *                - oFieldArray : model field data
+ * Return       : dataset column(s) data
+ * Description  : Function to generate <Column> source
+ *---------------------------------------------------------------------------------------------*/
+fn_GetDsColumns = function(){
+    var i;
+    var oColumns = [];
+
+    var oField;
+    var sFieldId;
+    var sDataType;
+    var sDataSize;
+
+    //모델 Field 개수 가져오기
+    var nCount = oFieldArray.fieldcount;
+
+    //모델 Field 개수 만큼 컬럼 정보 만들기
+    for(i=0;i<nCount;i++)
+    {
+        oField = oFieldArray.fields[i];
+
+        sFieldId = oField.id;
+        sDataType = oField.datatype;
+        sDataSize = oField.datasize;
+
+        oColumns[i] =
+        {
+            "tag": "Column",
+            "attribute":
+            {
+                "id": sFieldId, "type": sDataType, "size": sDataSize
+            }
+        };
+    }
+
+    //컬럼 정보 리턴
+    return oColumns;
+}
+
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetDsRows
+ * Parameter    :
+ *                - oFieldArray : model field data
+ * Return       : dataset row(s) data
+ * Description  : Function to generate <Row> source
+ *---------------------------------------------------------------------------------------------*/
+fn_GetDsRows = function(){
+    var i;
+    var oRows = [];
+    var oRow = [];
+
+    var oField;
+    var sFieldId;
+
+    //로우 개수
+    var nRowCnt = 1;
+
+    //컬럼 개수
+    var nColCnt = oFieldArray.fieldcount;
+
+    for(i=0;i<nRowCnt;i++)
+    {
+        oRow = [];
+
+        //Row정보 Rows에 추가
+        oRows[i] = {"tag": "Row",    "attribute": {},"Row": oRow};
+    }
+
+    //Rows 정보 리턴
+    return oRows;
+}]]></Script>
+</ViewTemplateInfo>

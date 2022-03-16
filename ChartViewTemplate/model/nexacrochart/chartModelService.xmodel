@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ModelInfo version="1.1">
+  <Models>
+    <Model id="rainfallmodel" name="rainfallmodel" iotype="output" description="">
+      <Field required="false" id="Month" label="월" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="Seoul" label="서울지점" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
+      <Field required="false" id="Busan" label="부산지점" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
+      <Field required="false" id="Gwangju" label="광주지점" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
+    </Model>
+  </Models>
+  <Service id="" name="" url=""/>
+</ModelInfo>

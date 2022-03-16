@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Script version="1.0" type="xscript5.1"><![CDATA[//----------------------------- 공통 상수 설정부 START --------------------------------------
+//모델 정보
+var oFieldArray;
+	
+//뷰 컴포넌트 정보
+var oContents;
+	
+//옵션 설정 정보
+var oGenerationAttr;
+
+//컴포넌트 ID 목록
+var arrCompIds = [];
+
+//컴포넌트 + 바인드 Field 목록
+var arrBindItems = [];
+//----------------------------- 공통 상수 설정부 END ------------------------------------------
+
+//----------------------------- 디자인관련 상수 설정부 START ---------------------------------
+
+//----------------------------- 디자인관련 상수 설정부 END -----------------------------------
+var LOG_LEVEL    		  = -1;			// [0 : "debug",1 : "info", 2 : "warn", 3: "error"]
+
+fn_Log = function(sMsg, sType)
+{
+	var arrLogLevel = ["debug","info","warn","error"];
+	
+	if(sType == undefined)	sType = "debug";
+	var nLvl = arrLogLevel.indexOf(sType);
+	
+	if (nLvl < LOG_LEVEL)		return;
+	
+	if (system.navigatorname == "nexacro DesignMode"
+		|| system.navigatorname == "nexacro") {
+		if (sMsg instanceof Object) {
+			for(var x in sMsg){
+				trace("[" + sType + "] " + x + " : " + sMsg[x]);
+			}
+		} else {
+			trace("[" + sType + "] " + sMsg);
+		}
+	} else {
+		console.log(sMsg);
+	}
+}
+
+fn_CopyObject = function(oTo, oFrom)
+{
+	if(oTo == undefined)		oTo = {};
+	
+	if (oFrom instanceof Object) {
+		for(var x in oFrom){
+			oTo[x] = oFrom[x];
+		}
+	}
+};]]></Script>
