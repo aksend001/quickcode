@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ViewTemplateInfo version="1.0">
-  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="막대그래프(Bar Chart)를 그려주는 템플릿"/>
+  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="막대그래프(Bar Chart)를 그려주는 템플릿&#13;&#10;- ColumnChart : 세로 막대그래프&#13;&#10;- BarChart : 가로 막대그래프"/>
   <Script version="1.0" type="xscript5.1"><![CDATA[/*============================================================================================*
 o File Name   : 
 o Developer   : 
@@ -10,7 +10,7 @@ o Description :
 include "view_lib::chart.xjs";
 
 var oBaseChartAttr =	{
-							"id" : "chtBasic", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
+							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
 							//, "binddataset" : "viewdataset"
 							, "binddataset" : "dsData"
 						};
@@ -80,6 +80,9 @@ var oBaseValueaxis =	{
 var oBaseBarSeries =	{
 							  "barvisible" 			: true
 							, "barsize" 			: "75"
+							, "itemtextcolor"		: "#4c4c4c"
+							, "itemtextfont"		: "normal 10/normal '맑은 고딕'"
+							, "baritemtextgap"		: 5
 						};
 //////////////////////////////상수 설정부 START ////////////////////////////////////////////////////
 //////////////////////////////상수 설정부 END ////////////////////////////////////////////////////
@@ -256,7 +259,7 @@ fn_GetViewAttributeList = function() {
                                 "description": "범례 표시 위치"
                             }
 							, {
-                                "id": "itemtextposition",
+                                "id": "itemtextposition",		// [BarChart]
                                 "edittype": "Enum",
                                 "defaultvalue": "none",
                                 "enumlist" : ["none", "start", "middle", "end", "outside"],
@@ -300,24 +303,27 @@ fn_GetFieldUserAttributeList = function ()
 	var oFieldAttr = {
                         "attributes": [
                             {
-                                "id": "displaytype",
-                                "edittype": "Enum",
-								"enumlist" : ["category", "series"],
-                                "defaultvalue": "series",
-                                "description": "데이터 표현방식"
+                                "id"			: "displaytype",
+                                "edittype"		: "Enum",
+								"enumlist" 		: ["none", "category", "series"],
+                                "defaultvalue"	: "series",
+                                "description"	: "데이터 표현방식"
+												+ "\n" + " - none : 사용안함"
+												+ "\n" + " - category : 데이터명 Field(1개)"
+												+ "\n" + " - series : 데이터값 Field(n개)"
                             }
 							, {
-                                "id": "valueaxes",
-                                "edittype" : "Enum",
-								"enumlist" : ["y", "y1", "y2"],
-								"defaultvalue" : "y",
-                                "description" : "데이터축을 설정. y는 왼쪽, y1,y2는 오른쪽에 표시됨."
+                                "id"			: "valueaxes",
+                                "edittype" 		: "Enum",
+								"enumlist" 		: ["y", "y1", "y2"],
+								"defaultvalue"	: "y",
+                                "description"	: "데이터축을 설정. y는 왼쪽, y1,y2는 오른쪽에 표시됨."
                             }
 							, {
-                                "id": "stackedgroupname",
-                                "edittype" : "String",
-								"defaultvalue" : "",
-                                "description" : "누적(stacked) 차트에서 그룹핑하는 경우 명칭 설정.(chartdisplay이 'stacked','100%stacked'인 경우에만 동작)"
+                                "id"			: "stackedgroupname",
+                                "edittype" 		: "String",
+								"defaultvalue"	: "",
+                                "description"	: "누적(stacked) 차트에서 그룹핑하는 경우 명칭 설정.(chartdisplay이 'stacked','100%stacked'인 경우에만 동작)"
                             }
 // 							,{
 //                                 "id": "datatype",
@@ -548,6 +554,8 @@ fn_GetSeries = function(arrSeriesField)
 		} else {
 			oSeries["itemtextvisible"] = true;
 			//oSeries["itemtexttype"] = oField.datatype;
+			
+			// [BarChart]
 			oSeries["baritemtextposition"] = sItemTextPosition;
 		}
 		

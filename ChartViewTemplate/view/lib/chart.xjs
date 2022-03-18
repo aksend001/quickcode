@@ -19,7 +19,88 @@ var arrBindItems = [];
 //----------------------------- 디자인관련 상수 설정부 START ---------------------------------
 
 //----------------------------- 디자인관련 상수 설정부 END -----------------------------------
-var LOG_LEVEL    		  = -1;			// [0 : "debug",1 : "info", 2 : "warn", 3: "error"]
+/** @const {string} */
+// 네이밍 컨벤션 종류 (C : camelCase, S : snakeCase, LS : lower snakeCase, 빈값 : 지정안함.)
+var COMP_NAMING_RULE	= "C";
+/** @const {string} */
+// 디버깅 레벨 [0:"debug", 1:"info", 2:"warn", 3:"error"]
+var LOG_LEVEL			= -1;			
+/*---------------------------------------------------------------------------------------------*
+ * Function     : fn_GetCompId
+ * Parameter    : 
+				- sCompId : 생성할 컴포넌트 아이디
+ * Return       : sRtnCompId : 컴포넌트 ID
+ * Description  : 컴포넌트 ID 생성 함수
+ *---------------------------------------------------------------------------------------------*/
+fn_GetCompId = function(sCompId){
+	
+	var sNewCompId = "";
+	
+	if (COMP_NAMING_RULE == "C") {
+		sNewCompId = fn_ToCamelCase(sCompId);
+	} else if (COMP_NAMING_RULE == "S") {
+		sNewCompId = fn_ToSnakeCase(sCompId);
+	} else if (COMP_NAMING_RULE == "LS") {
+		sNewCompId = fn_ToLowerSnakeCase(sCompId);
+	} else {
+		sNewCompId = sCompId;
+	}
+	//trace("fn_GetCompId() : " + sCompId + " -> " + sNewCompId);
+	
+	//동일한 Field로 생성된 컴포넌트 있는지 체크
+	var arrTemp = arrCompIds.filter(arrCompIds=>arrCompIds.indexOf(sNewCompId)==0);
+	var sRtnCompId;
+	
+	//동일한 Field로 생성된 컴포넌트가 존재할 경우
+	if(arrTemp.length>0)sRtnCompId = sNewCompId+"_"+arrTemp.length;
+	
+	//동일한 Field로 생성된 컴포넌트가 없을 경우 
+	else sRtnCompId = sNewCompId;
+	
+	//컴포넌트 ID관리 Array에 추가
+	arrCompIds[arrCompIds.length] = sRtnCompId;
+	
+	//컴포넌트 ID 리턴
+	return sRtnCompId;
+}	
+
+/**
+ * @class 문자열을 CamelCase 형식으로 변환한다.
+ * @param {string} sValue - 변환할 문자열
+ * @return {string} CamelCase 형식으로 변환된 문자열
+ * @example
+ * var sReturn = fn_ToCamelCase("background color");	// backgroundColor <br>
+ * var sReturn2 = fn_ToCamelCase("USER_TYPE");			// userType <br>
+ */
+fn_ToCamelCase = function(sValue){
+  return sValue.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+}
+
+/**
+ * @class 문자열을 SnakeCase 형식으로 변환한다.
+ * @param {string} sValue - 변환할 문자열
+ * @return {string} SnakeCase 형식으로 변환된 문자열
+ * @example
+ * var sReturn = fn_ToSnakeCase("background color");	// background_color <br>
+ * var sReturn2 = fn_ToSnakeCase("USER_TYPE");			// _u_s_e_r__t_y_p_e <br>
+ */
+fn_ToSnakeCase = function(sValue){
+	var result = sValue.replace( /([A-Z])/g, " $1" );
+	return result.split(' ').join('_').toLowerCase();
+}
+
+/**
+ * @class 문자열을 소문자로 변환 후 SnakeCase 형식으로 변환한다.
+ * @param {string} sValue - 변환할 문자열
+ * @return {string} SnakeCase 형식으로 변환된 문자열(상수형 문자열도 SnakeCase로 변환)
+ * @example
+ * var sReturn = fn_ToLowerSnakeCase("background color");	// background_color <br>
+ * var sReturn2 = fn_ToLowerSnakeCase("USER_TYPE");			// user_type <br>
+ */
+fn_ToLowerSnakeCase = function(sValue){
+	var result = sValue.toLowerCase().replace( /([A-Z])/g, " $1" );
+	return result.split(' ').join('_');
+}
 
 fn_Log = function(sMsg, sType)
 {

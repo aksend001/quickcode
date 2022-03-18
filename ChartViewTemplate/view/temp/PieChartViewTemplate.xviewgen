@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ViewTemplateInfo version="1.0">
-  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="원그래프(Pie Chart)를 그려주는 템플릿"/>
+  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="원그래프(Pie Chart)를 그려주는 템플릿&#13;&#10;- PieChart : 원차트&#13;&#10;- DoughnutChart : 도넛차트"/>
   <Script version="1.0" type="xscript5.1"><![CDATA[/*============================================================================================*
 o File Name   : 
 o Developer   : 
@@ -9,8 +9,10 @@ o Description :
 *============================================================================================*/
 include "view_lib::chart.xjs";
 
+var arrBaseChartColor = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+
 var oBaseChartAttr =	{
-							"id" : "chtBasic", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
+							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
 							//, "binddataset" : "viewdataset"
 							, "binddataset" : "dsData"
 						};
@@ -48,38 +50,51 @@ var oBaseLegend = 		{
 							, "linestyle" : "1px dashed #4c4c4c"
 						};
 						
-var oBaseCategoryaxis =	{
-							  "id" 					: "categoryaxis"
-							, "titletextcolor"		: "#4c4c4c"
-							, "titletextfont"		: "bold 12pt '맑은 고딕'"
-							, "labeltextcolor"		: "#6f6f6f"
-							, "labeltextfont"		: "9pt '맑은 고딕'"
-							, "axislinestyle"		: "1px solid #525252"
-							, "ticklinestyle"		: "1px solid #525252"
-							, "boardlinestyle"		: "1px solid #d0d0d0"
-							, "ticksize"			: "5"
-							, "labelgap"			: "5"
-							, "labelrotate"			: "-30"
-						};
+// var oBaseCategoryaxis =	{
+// 							  "id" 					: "categoryaxis"
+// 							, "titletextcolor"		: "#4c4c4c"
+// 							, "titletextfont"		: "bold 12pt '맑은 고딕'"
+// 							, "labeltextcolor"		: "#6f6f6f"
+// 							, "labeltextfont"		: "9pt '맑은 고딕'"
+// 							, "axislinestyle"		: "1px solid #525252"
+// 							, "ticklinestyle"		: "1px solid #525252"
+// 							, "boardlinestyle"		: "1px solid #d0d0d0"
+// 							, "ticksize"			: "5"
+// 							, "labelgap"			: "5"
+// 							, "labelrotate"			: "-30"
+// 						};
 						
-var oBaseValueaxis =	{
-							  "id" 					: "valueaxis"
-							, "boardlinevisible"	: true
-							, "boardlinestyle" 		: "1px solid #d0d0d0"
-							, "labeltextcolor" 		: "#6f6f6f"
-							, "labeltextfont" 		: "9pt/normal '맑은 고딕'"
-							, "titletextcolor" 		: "#4c4c4c"
-							, "titletextfont" 		: "bold 12pt '맑은 고딕'"
-							, "ticklinestyle" 		: "1px solid #525252"
-							, "axislinestyle" 		: "1px solid #525252"
-							, "labelgap" 			: "5"
-							, "ticksize" 			: "5"
-							, "autotickscale"		: "10"
-						};
+// var oBaseValueaxis =	{
+// 							  "id" 					: "valueaxis"
+// 							, "boardlinevisible"	: true
+// 							, "boardlinestyle" 		: "1px solid #d0d0d0"
+// 							, "labeltextcolor" 		: "#6f6f6f"
+// 							, "labeltextfont" 		: "9pt/normal '맑은 고딕'"
+// 							, "titletextcolor" 		: "#4c4c4c"
+// 							, "titletextfont" 		: "bold 12pt '맑은 고딕'"
+// 							, "ticklinestyle" 		: "1px solid #525252"
+// 							, "axislinestyle" 		: "1px solid #525252"
+// 							, "labelgap" 			: "5"
+// 							, "ticksize" 			: "5"
+// 							, "autotickscale"		: "10"
+// 						};
 						
-var oBaseBarSeries =	{
-							  "barvisible" 			: true
-							, "barsize" 			: "75"
+var oBasePieSeries =	{
+							  "radius" 					: "60"
+							, "opacity" 				: "0.8"
+							, "linestyle" 				: "1px solid #ffffff"
+							, "fillstyle" 				: arrBaseChartColor.toString()
+							, "itemtextvisible" 		: true
+							, "itemtexttype" 			: "text"
+							, "itemtextguidelinestyle"	: "1px solid darkgray"
+							, "itemtextguideopacity" 	: "1"
+							, "itemtextguidesize" 		: "20"
+							, "selectindent" 			: "20"
+							, "highlightvisible"		: true
+							, "highlightradius"			: "60"
+							, "highlightopacity"		: "0.3"
+							, "highlightfillstyle"		: "#ffffff"
+							, "highlightlinestyle"		: "1px solid #ffffff"
 						};
 //////////////////////////////상수 설정부 START ////////////////////////////////////////////////////
 //////////////////////////////상수 설정부 END ////////////////////////////////////////////////////
@@ -206,22 +221,32 @@ fn_GetViewAttributeList = function() {
 							{
                                 "id": "charttype",
                                 "edittype": "Enum",
-                                "defaultvalue": "column",
-                                "enumlist" : ["column", "bar"],
-                                "description": "막대차트 종류."
-												+ "\n" + " - column : 세로 막대형 차트"
-												+ "&#13;&#10;" + " - bar : 가로 막대형 차트"
+                                "defaultvalue": "pie",
+                                "enumlist" : ["pie", "doughnut"],
+                                "description": "원차트 종류."
+												+ "\n" + " - pie : 원 차트"
+												+ "\n" + " - doughnut : 도넛 차트"
                             }
 							, {
                                 "id": "chartdisplay",
                                 "edittype": "Enum",
-                                "defaultvalue": "grouped",
-                                "enumlist" : ["grouped", "stacked", "100%stacked","overlapping"],		// "groupedstacked"
-                                "description": "차트의 유형을 설정."
-												+ "\n" + " - grouped : 묶은 막대차트"
-												+ "\n" + " - stacked : 누적 막대차트"
-												+ "\n" + " - 100%stacked : 100% 기준 누적 막대차트"
-												+ "\n" + " - overlapping : 중복 막대차트"
+                                "defaultvalue": "circle",
+                                "enumlist" : ["circle", "semicircle"],
+                                "description": "원차트 표시모양"
+												+ "\n" + " - circle : 원"
+												+ "\n" + " - semicircle : 반원"
+                            }
+							, {
+                                "id": "innerradius",
+                                "edittype": "Number",
+                                "defaultvalue": "50",
+                                "description": "도넛차트의 안쪽 원의 지름 크기(%)"
+                            }
+							, {
+                                "id": "innertext",
+                                "edittype": "String",
+                                "defaultvalue": "",
+                                "description": "도넛차트의 안쪽 텍스트"
                             }
 							, {									
                                 "id": "enableanimation",									
@@ -255,13 +280,13 @@ fn_GetViewAttributeList = function() {
                                 "enumlist" : ["none", "topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
                                 "description": "범례 표시 위치"
                             }
-							, {
-                                "id": "itemtextposition",
-                                "edittype": "Enum",
-                                "defaultvalue": "none",
-                                "enumlist" : ["none", "start", "middle", "end", "outside"],
-                                "description": "값 표시 위치"
-                            }
+// 							, {
+//                                 "id": "itemtextposition",
+//                                 "edittype": "Enum",
+//                                 "defaultvalue": "none",
+//                                 "enumlist" : ["none", "start", "middle", "end", "outside"],
+//                                 "description": "값 표시 위치"
+//                             }
                         ]
                   };
 				  
@@ -300,32 +325,15 @@ fn_GetFieldUserAttributeList = function ()
 	var oFieldAttr = {
                         "attributes": [
                             {
-                                "id": "displaytype",
-                                "edittype": "Enum",
-								"enumlist" : ["category", "series"],
-                                "defaultvalue": "series",
-                                "description": "데이터 표현방식"
+                                "id"			: "displaytype",
+                                "edittype"		: "Enum",
+								"enumlist" 		: ["none", "category", "series", "select"],
+                                "defaultvalue"	: "none",
+                                "description"	: "데이터 표현방식"
+												+ "\n" + " - category : 데이터명 Field(1개)"
+												+ "\n" + " - series : 데이터값 Field(1개)"
+												+ "\n" + " - select : 선택여부 데이터 Field(1개)"
                             }
-							, {
-                                "id": "valueaxes",
-                                "edittype" : "Enum",
-								"enumlist" : ["y", "y1", "y2"],
-								"defaultvalue" : "y",
-                                "description" : "데이터축을 설정. y는 왼쪽, y1,y2는 오른쪽에 표시됨."
-                            }
-							, {
-                                "id": "stackedgroupname",
-                                "edittype" : "String",
-								"defaultvalue" : "",
-                                "description" : "누적(stacked) 차트에서 그룹핑하는 경우 명칭 설정.(chartdisplay이 'stacked','100%stacked'인 경우에만 동작)"
-                            }
-// 							,{
-//                                 "id": "datatype",
-//                                 "edittype" : "Enum",
-// 								"enumlist" : ["normal", "number", "text", "currency"],
-// 								"defaultvalue" : "normal",
-//                                 "description" : "Field의 편집형식을 설정합니다."
-//                             }
                         ]
                   };
 				  
@@ -365,19 +373,22 @@ fn_GetModel = function(){
 	// 카테고리 필드 ID
 	var sCategoryId;
 	
-	var arrField = new Array(); 
+	// 시리즈 필드 ID
+	var SeriesField;
+	
+	// 선택 필드 ID
+	var sSelectId;
+	
+	var arrField = new Array();
 	var arrSeriesField = new Array();
-	var arrAxisY1Field = new Array();
-	var arrAxisY2Field = new Array();
 
-	var sDisplaytype, sValueaxes;
+	var sDisplaytype;
 	
 	//차트에서 사용할 모델 Field ID 리스트 만들기
     for(i=0;i<nFieldCount;i++)
     {
         oField = oFieldArray.fields[i];
 		sDisplaytype = oField.displaytype;
-		sValueaxes = oField.valueaxes;
 		
 		// oFieldArray Json Data로 Field Array() 셋팅
 		arrField.push(oField.id);
@@ -387,36 +398,39 @@ fn_GetModel = function(){
 			if (sCategoryId == undefined) {
 				sCategoryId = oField.id;
 			} else {
-				fn_Log("category가 여러개 설정되었습니다.","warn");
+				fn_Log("category가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다.)","warn");
 			}
 			
 		} else if (sDisplaytype == "series") {
-			arrSeriesField.push(oField);
-			
-			// valueaxes에 따라 Y축 Array() 셋팅
-			if (sValueaxes == "y1") {
-				arrAxisY1Field.push(oField);
-			} else if (sValueaxes == "y2") {
-				arrAxisY2Field.push(oField);
+			if (SeriesField == undefined) {
+				SeriesField = oField.id;
+				arrSeriesField.push(oField);
+			} else {
+				fn_Log("series가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다.)","warn");
 			}
+		} else if (sDisplaytype == "select") {
+			if (sSelectId == undefined) {
+				sSelectId = oField.id;
+			} else {
+				fn_Log("select가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다.)","warn");
+			}
+			
 		}
     }
 	
 	// 차트 기본속성 셋팅
 	fn_CopyObject(oChartAttr,oBaseChartAttr);
 	
-	// 차트종류설정
-	if (sChartType == "bar") {
-		oChartAttr["rotateaxis"] = "true";
+	// 차트유형설정
+	if (sChartDisplay == "semicircle") {		// 반원
+		oBasePieSeries["startangle"] = "270";
+		oBasePieSeries["endangle"] = "180";
 	}
 	
-	// 차트유형설정
-	if (sChartDisplay == "stacked") {
-		oChartAttr["stacktype"] = "normal";
-	} else if (sChartDisplay == "100%stacked") {
-		oChartAttr["stacktype"] = "percent";
-	} else if (sChartDisplay == "overlapping") {
-		oChartAttr["bargrouping"] = "false";
+	// 도넛차트 내부 안쪽 원의 지름 크기, 텍스트 설정
+	if (sChartType == "doughnut") {
+		oBasePieSeries["innerradius"] = oGenerationAttr.attributes.innerradius;
+		oBaseBoard["text"] = oGenerationAttr.attributes.innertext;
 	}
 	
 	// 에니메이션 설정
@@ -444,6 +458,12 @@ fn_GetModel = function(){
 		oChartAttr["categorycolumn"] = "bind:" + sCategoryId;
 	}
 	
+	// 선택 필드 설정
+	if (sSelectId != undefined) {
+		oBasePieSeries["selectcolumn"] = "bind:" + sSelectId;
+		oBasePieSeries["selecttype"] = "bind";
+	}
+	
 	//차트 컴포넌트 추가
 	var oModel = oContents.View.Model;
     oModel[oModel.length] = {
@@ -451,7 +471,7 @@ fn_GetModel = function(){
             "Components" :
             [
                 {
-                    "tag" : "BasicChart",
+                    "tag" : "PieChart",
                     "attribute" : oChartAttr,
                     "BasicChart" :
                     [
@@ -462,8 +482,6 @@ fn_GetModel = function(){
 								"legend" 		: oLegend,
 								"tooltip" 		: oBaseTooltip,
 								"board" 		: oBaseBoard,
-								"categoryaxis" 	: oBaseCategoryaxis,
-								"valueaxes" 	: fn_GetValueAxes(arrAxisY1Field,arrAxisY2Field),
 								"seriesset" 	: fn_GetSeries(arrSeriesField)
 							}
                         }
@@ -476,47 +494,9 @@ fn_GetModel = function(){
     return oModel;
 };
 
-// 데이터 축 설정
-fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
-{
-	var arrValueAxes = new Array();
-	var oValueAxes;
-	
-	var oField;
-	
-	// TODO : 축관련 설정이 들어가면 수정필요.
-	
-	// 기본y축 추가
-	oValueAxes = {};
-	fn_CopyObject(oValueAxes,oBaseValueaxis);
-	oValueAxes["id"] = "valueaxis" + "y";
-	arrValueAxes.push(oValueAxes);
-	
-	// Y1추가
-	if (arrAxisY1Field.length > 0) {
-		oValueAxes = {};
-		fn_CopyObject(oValueAxes,oBaseValueaxis);
-		oValueAxes["id"] = "valueaxis" + "y1";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		arrValueAxes.push(oValueAxes);
-	}
-	
-	// Y2추가
-	if (arrAxisY2Field.length > 0) {
-		oValueAxes = {};
-		fn_CopyObject(oValueAxes,oBaseValueaxis);
-		oValueAxes["id"] = "valueaxis" + "y2";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		arrValueAxes.push(oValueAxes);
-	}
-
-    return arrValueAxes;
-}
-
 // 시리즈 셋팅
 fn_GetSeries = function(arrSeriesField)
 {
-	var sItemTextPosition = oGenerationAttr.attributes.itemtextposition;
 	var sChartDisplay = oGenerationAttr.attributes.chartdisplay;
 	
 	var arrSeries = new Array();
@@ -526,48 +506,25 @@ fn_GetSeries = function(arrSeriesField)
 	
 	var nCount = arrSeriesField.length;
 	
-	// layered 차트일때 사이즈 셋팅용.
-	var nBarSizeMax = 80;
-	var nBarSizeMin = 20;
-	var nBarSizeGap = nexacro.round((nBarSizeMax - nBarSizeMin) / nCount);
-
 	//Model Field의 갯수 기준으로 Column 태그 생성
 	for(var i=0;i<nCount;i++)
 	{
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		fn_CopyObject(oSeries,oBaseBarSeries);
+		fn_CopyObject(oSeries,oBasePieSeries);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
 		
 		// 데이터 출력설정
-		if (sItemTextPosition == "none") {
-			oSeries["itemtextvisible"] = false;
-		} else {
-			oSeries["itemtextvisible"] = true;
-			//oSeries["itemtexttype"] = oField.datatype;
-			oSeries["baritemtextposition"] = sItemTextPosition;
-		}
-		
-		// Y축설정
-		if (oField.valueaxes == "y1") {
-			oSeries["valueaxis"] = "valueaxisy1";
-		} else if (oField.valueaxes == "y2") {
-			oSeries["valueaxis"] = "valueaxisy2";
-		}
-		
-		// 누적(stacked) 차트에서 그룹핑 설정
-		if (oField.stackedgroupname != undefined) {
-			oSeries["stackbargroup"] = oField.stackedgroupname;
-		}
-		
-		// 중복(Overlapping) 차트일떄 일때 사이즈 설정
-		if (sChartDisplay == "overlapping") {
-			oSeries["barsize"] = nBarSizeMax - (i * nBarSizeGap);
-			//fn_Log("barsize : " + oSeries["barsize"]);
-		}
+// 		if (sItemTextPosition == "none") {
+// 			oSeries["itemtextvisible"] = false;
+// 		} else {
+// 			oSeries["itemtextvisible"] = true;
+// 			//oSeries["itemtexttype"] = oField.datatype;
+// 			oSeries["baritemtextposition"] = sItemTextPosition;
+// 		}
 		
 		arrSeries.push(oSeries);
 	}

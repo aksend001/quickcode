@@ -7,6 +7,12 @@
       <Field required="false" id="Busan" label="부산지점" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
       <Field required="false" id="Gwangju" label="광주지점" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
     </Model>
+    <Model id="webbrowsermodel" name="webbrowsermodel" iotype="output" description="">
+      <Field required="false" id="DEVICE" label="디바이스" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="BROWSER_NAME" label="브라우저명" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="SHARE" label="점유율" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
+      <Field required="false" id="CHK" label="check" fieldtype="FreeText" datatype="STRING" datasize="1"/>
+    </Model>
   </Models>
   <Service id="" name="" url=""/>
 </ModelInfo>
