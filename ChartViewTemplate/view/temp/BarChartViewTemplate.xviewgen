@@ -213,7 +213,7 @@ fn_GetViewAttributeList = function() {
                                 "enumlist" : ["column", "bar"],
                                 "description": "막대차트 종류."
 												+ "\n" + " - column : 세로 막대형 차트"
-												+ "&#13;&#10;" + " - bar : 가로 막대형 차트"
+												+ "\n" + " - bar : 가로 막대형 차트"
                             }
 							, {
                                 "id": "chartdisplay",
