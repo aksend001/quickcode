@@ -1,16 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ViewTemplateInfo version="1.0">
   <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="막대그래프(Bar Chart)를 그려주는 템플릿&#13;&#10;- ColumnChart : 세로 막대그래프&#13;&#10;- BarChart : 가로 막대그래프"/>
-  <Script version="1.0" type="xscript5.1"><![CDATA[/*============================================================================================*
-o File Name   : 
-o Developer   : 
-o Create Date : 
-o Description : 
-*============================================================================================*/
+  <Script version="1.0" type="xscript5.1"><![CDATA[/**
+*  [Chart] BarChart View Template
+*  @FileName 	BarChartViewTemplate.xviewgen 
+*  @Creator 	Creator
+*  @CreateDate 	2022.03.10
+*  @Desction    막대그래프(Bar Chart)를 그려주는 템플릿
+*  					- ColumnChart : 세로 막대그래프
+*  					- BarChart : 가로 막대그래프
+************** 소스 수정 이력 ***********************************************
+*  date          		Modifier                Description
+*******************************************************************************
+*  2022.03.10     		Creator       	      		최초 생성
+*******************************************************************************
+*/
+/************************************************************************************************
+ * include 선언부
+ ************************************************************************************************/
 include "view_lib::util.xjs";
+include "view_lib::common.xjs";
 include "view_lib::chart.xjs";
-//////////////////////////////상수 설정부 START ////////////////////////////////////////////////////
-//////////////////////////////상수 설정부 END ////////////////////////////////////////////////////
+/************************************************************************************************
+ * 변수 선언 영역
+ ************************************************************************************************/
+/************************************************************************************************
+ * Nexacro Studio 호출 필수 FUNCTION 영역
+ ************************************************************************************************/
 /*---------------------------------------------------------------------------------------------*
  * Function    : fn_GetViewGenerationResult
  * Parameter   : 
@@ -72,31 +88,31 @@ fn_GetViewGenerationResult = function(fieldarray, contents, generationattr) {
     //trace(">> generationattr : " + generationattr);
 
     //모델정보를 JSON 오브젝트로 설정
-    if(fieldarray)oFieldArray = JSON.parse(fieldarray);
+    if(fieldarray)this.oFieldArray = JSON.parse(fieldarray);
 
 	//뷰 컴포넌트 정보를 JSON 오브젝트로 설정
-    if(contents)oContents = JSON.parse(contents);
+    if(contents)this.oContents = JSON.parse(contents);
 
 	//옵션 설정 정보를 JSON 오브젝트로 설정
-    if(generationattr)oGenerationAttr = JSON.parse(generationattr);
+    if(generationattr)this.oGenerationAttr = JSON.parse(generationattr);
 
 	//모델정보 초기화
-	oContents.View.Model = [];
+	this.oContents.View.Model = [];
 
 	//모델정보 생성 함수 호출
 	fn_GetModel();
 
 	//InitValue 정보 생성 함수 호출
-    oContents.View.InitValue = fn_GetInitValue();
+    this.oContents.View.InitValue = fn_GetInitValue();
 
 	//Object 정보 생성 함수 호출
-    oContents.View.Objects = fn_GetObjects();
+    this.oContents.View.Objects = fn_GetObjects();
 
 	//Script 정보 생성 함수 호출
-    oContents.View.Script = fn_GetScript();
+    this.oContents.View.Script = fn_GetScript();
 
 	//뷰 컴포넌트 정보를 String으로 변환
-    vResult = JSON.stringify(oContents, null, "\t");
+    vResult = JSON.stringify(this.oContents, null, "\t");
 
     //trace(">> vResult : " + vResult);
     //뷰 컴포넌트 정보 리턴
@@ -266,13 +282,15 @@ fn_GetFieldUserAttributeList = function ()
 
     return sFieldAttr;
 }
-
+/************************************************************************************************
+ * 사용자 FUNCTION 영역
+ ************************************************************************************************/
 /*---------------------------------------------------------------------------------------------*
  * Function     : fn_GetModel
  * Parameter    :
- *                - oFieldArray : model field data
- *                - oContents : view contents
- *                - oGenerationAttr : attributes for view generation
+ *                - this.oFieldArray : model field data
+ *                - this.oContents : view contents
+ *                - this.oGenerationAttr : attributes for view generation
  * Return       : model contents (JSON format)
  * Description  : Function to generate a component source based on field information of the model entered by the user
  *---------------------------------------------------------------------------------------------*/
@@ -283,15 +301,15 @@ fn_GetModel = function(){
 	var oTitle = {};
 	var oLegend = {};
 	
-	var sChartType = oGenerationAttr.attributes.charttype;
-	var sChartDisplay = oGenerationAttr.attributes.chartdisplay;
-	var sTitletext = oGenerationAttr.attributes.titletext;
-	var sSubTitletext = oGenerationAttr.attributes.subtitletext;
-	var sTitleAlign = oGenerationAttr.attributes.titlealign;
-	var sLegendPosition = oGenerationAttr.attributes.legendposition;
+	var sChartType = this.oGenerationAttr.attributes.charttype;
+	var sChartDisplay = this.oGenerationAttr.attributes.chartdisplay;
+	var sTitletext = this.oGenerationAttr.attributes.titletext;
+	var sSubTitletext = this.oGenerationAttr.attributes.subtitletext;
+	var sTitleAlign = this.oGenerationAttr.attributes.titlealign;
+	var sLegendPosition = this.oGenerationAttr.attributes.legendposition;
 	
 	//모델 필드 갯수 가져오기
-    var nFieldCount = oFieldArray.fieldcount;
+    var nFieldCount = this.oFieldArray.fieldcount;
 	
 	// 카테고리 필드 ID
 	var sCategoryId;
@@ -306,11 +324,11 @@ fn_GetModel = function(){
 	//차트에서 사용할 모델 Field ID 리스트 만들기
     for(i=0;i<nFieldCount;i++)
     {
-        oField = oFieldArray.fields[i];
+        oField = this.oFieldArray.fields[i];
 		sDisplaytype = oField.displaytype;
 		sValueaxes = oField.valueaxes;
 		
-		// oFieldArray Json Data로 Field Array() 셋팅
+		// this.oFieldArray Json Data로 Field Array() 셋팅
 		arrField.push(oField.id);
 		
 		// displaytype에 따라 Array() 셋팅
@@ -318,7 +336,7 @@ fn_GetModel = function(){
 			if (sCategoryId == undefined) {
 				sCategoryId = oField.id;
 			} else {
-				fn_Log("category가 여러개 설정되었습니다.","warn");
+				this.lfn_Log("category가 여러개 설정되었습니다.","warn");
 			}
 			
 		} else if (sDisplaytype == "series") {
@@ -334,7 +352,7 @@ fn_GetModel = function(){
     }
 	
 	// 차트 기본속성 셋팅
-	oChartAttr = this.fn_CloneObject(this.oBaseChartAttr);
+	oChartAttr = this.lfn_CloneObject(this.oBaseChartAttr);
 	
 	// 차트종류설정
 	if (sChartType == "bar") {
@@ -351,11 +369,11 @@ fn_GetModel = function(){
 	}
 	
 	// 에니메이션 설정
-	oChartAttr["enableanimation"] = oGenerationAttr.attributes.enableanimation;
+	oChartAttr["enableanimation"] = this.oGenerationAttr.attributes.enableanimation;
 	
 	// 타이틀설정
 	if (sTitletext != undefined || sSubTitletext != undefined) {
-		oTitle = this.fn_CloneObject(this.oBaseTitle);
+		oTitle = this.lfn_CloneObject(this.oBaseTitle);
 		oTitle["text"] = sTitletext;
 		oTitle["subtext"] = sSubTitletext;
 		oTitle["align"] = sTitleAlign;
@@ -364,19 +382,19 @@ fn_GetModel = function(){
 	// 범례 설정
 	if (sLegendPosition != "none")
 	{
-		oLegend = this.fn_CloneObject(this.oBaseLegend);
+		oLegend = this.lfn_CloneObject(this.oBaseLegend);
 		oLegend["align"] = sLegendPosition;
 	}
 	
 	// 카테고리 설정
 	if (sCategoryId == undefined) {
-		fn_Log("category가 설정되지 않았습니다.","warn");
+		this.lfn_Log("category가 설정되지 않았습니다.","warn");
 	} else {
 		oChartAttr["categorycolumn"] = "bind:" + sCategoryId;
 	}
 	
 	//차트 컴포넌트 추가
-	var oModel = oContents.View.Model;
+	var oModel = this.oContents.View.Model;
     oModel[oModel.length] = {
             "fieldid" : arrField.join(","),
             "Components" :
@@ -419,14 +437,14 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	
 	// 기본y축 추가
 	oValueAxes = {};
-	oValueAxes = this.fn_CloneObject(this.oBaseValueaxis);
+	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
 	arrValueAxes.push(oValueAxes);
 	
 	// Y1추가
 	if (arrAxisY1Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.fn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 		oValueAxes["id"] = "valueaxis" + "y1";
 		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
 		arrValueAxes.push(oValueAxes);
@@ -435,7 +453,7 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	// Y2추가
 	if (arrAxisY2Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.fn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 		oValueAxes["id"] = "valueaxis" + "y2";
 		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
 		arrValueAxes.push(oValueAxes);
@@ -447,8 +465,8 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 // 시리즈 셋팅
 fn_GetSeries = function(arrSeriesField)
 {
-	var sItemTextPosition = oGenerationAttr.attributes.itemtextposition;
-	var sChartDisplay = oGenerationAttr.attributes.chartdisplay;
+	var sItemTextPosition = this.oGenerationAttr.attributes.itemtextposition;
+	var sChartDisplay = this.oGenerationAttr.attributes.chartdisplay;
 	
 	var arrSeries = new Array();
 	var oSeries;
@@ -468,7 +486,7 @@ fn_GetSeries = function(arrSeriesField)
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		oSeries = this.fn_CloneObject(this.oBaseBarSeries);
+		oSeries = this.lfn_CloneObject(this.oBaseBarSeries);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
@@ -499,7 +517,7 @@ fn_GetSeries = function(arrSeriesField)
 		// 중복(Overlapping) 차트일떄 일때 사이즈 설정
 		if (sChartDisplay == "overlapping") {
 			oSeries["barsize"] = nBarSizeMax - (i * nBarSizeGap);
-			//fn_Log("barsize : " + oSeries["barsize"]);
+			//this.lfn_Log("barsize : " + oSeries["barsize"]);
 		}
 		
 		arrSeries.push(oSeries);
@@ -511,9 +529,9 @@ fn_GetSeries = function(arrSeriesField)
 /*---------------------------------------------------------------------------------------------*
  * Function     : fn_GetInitValue
  * Parameter    :
- *                - oFieldArray : model field data
- *                - oContents : view contents
- *                - oGenerationAttr : attributes for view generation
+ *                - this.oFieldArray : model field data
+ *                - this.oContents : view contents
+ *                - this.oGenerationAttr : attributes for view generation
  * Return       : initvalue contents (JSON format)
  * Description  : Function to generate <InitValue> source
  *---------------------------------------------------------------------------------------------*/
@@ -544,9 +562,9 @@ fn_GetInitValue = function(){
 /*---------------------------------------------------------------------------------------------*
  * Function     : fn_GetObjects
  * Parameter    :
- *                - oFieldArray : model field data
- *                - oContents : view contents
- *                - oGenerationAttr : attributes for view generation
+ *                - this.oFieldArray : model field data
+ *                - this.oContents : view contents
+ *                - this.oGenerationAttr : attributes for view generation
  * Return       : objects contents (JSON format)
  * Description  : Function to generate <Objects> source
  *---------------------------------------------------------------------------------------------*/
@@ -584,9 +602,9 @@ fn_GetObjects = function(){
 /*---------------------------------------------------------------------------------------------*
  * Function     : fn_GetScript
  * Parameter    :
- *                - oFieldArray : model field data
- *                - oContents : view contents
- *                - oGenerationAttr : attributes for view generation
+ *                - this.oFieldArray : model field data
+ *                - this.oContents : view contents
+ *                - this.oGenerationAttr : attributes for view generation
  * Return       : script contents (JSON format)
  * Description  : Function to generate <Script> source
  *---------------------------------------------------------------------------------------------*/
@@ -602,7 +620,7 @@ fn_GetScript = function(){
 /*---------------------------------------------------------------------------------------------*
  * Function     : fn_GetDsColumns
  * Parameter    :
- *                - oFieldArray : model field data
+ *                - this.oFieldArray : model field data
  * Return       : dataset column(s) data
  * Description  : Function to generate <Column> source
  *---------------------------------------------------------------------------------------------*/
@@ -616,12 +634,12 @@ fn_GetDsColumns = function(){
     var sDataSize;
 
     //모델 Field 개수 가져오기
-    var nCount = oFieldArray.fieldcount;
+    var nCount = this.oFieldArray.fieldcount;
 
     //모델 Field 개수 만큼 컬럼 정보 만들기
     for(i=0;i<nCount;i++)
     {
-        oField = oFieldArray.fields[i];
+        oField = this.oFieldArray.fields[i];
 
         sFieldId = oField.id;
         sDataType = oField.datatype;
@@ -644,7 +662,7 @@ fn_GetDsColumns = function(){
 /*---------------------------------------------------------------------------------------------*
  * Function     : fn_GetDsRows
  * Parameter    :
- *                - oFieldArray : model field data
+ *                - this.oFieldArray : model field data
  * Return       : dataset row(s) data
  * Description  : Function to generate <Row> source
  *---------------------------------------------------------------------------------------------*/
@@ -660,7 +678,7 @@ fn_GetDsRows = function(){
     var nRowCnt = 1;
 
     //컬럼 개수
-    var nColCnt = oFieldArray.fieldcount;
+    var nColCnt = this.oFieldArray.fieldcount;
 
     for(i=0;i<nRowCnt;i++)
     {
