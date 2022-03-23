@@ -7,83 +7,8 @@ o Developer   :
 o Create Date : 
 o Description : 
 *============================================================================================*/
+include "view_lib::util.xjs";
 include "view_lib::chart.xjs";
-
-var oBaseChartAttr =	{
-							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
-							//, "binddataset" : "viewdataset"
-							, "binddataset" : "dsData"
-						};
-						
-var oBaseTitle = 		{
-							  "id"					: "title"
-							, "textfont"			: "20pt/normal '맑은 고딕'"
-							, "padding"				: "0px 0px 5px"
-							, "subtextcolor"		: "gray"
-							, "subtextfont"			: "italic 8/normal 'Arial'"
-						};
-						
-var oBaseTooltip =		{
-							  "id"					: "tooltip"
-							, "background"			: "#4b4b4b"
-							, "linestyle"			: "0px none"
-							, "textcolor"			: "white"
-							, "textfont"			: "10pt/normal '맑은 고딕'"
-							, "padding"				: "5px"
-						};
-						
-var oBaseBoard =		{
-							  "id"					: "board"
-						};
-
-var oBaseLegend = 		{
-							  "id" : "legend"
-							, "padding" : "3px 10px 3px 10px"
-							, "itemtextfont" : "9pt '맑은 고딕'"
-							, "itemtextcolor" : "#4c4c4c"
-							, "itemautofit" : "true"
-							, "markertextgap" : "5"
-							, "markertype" : "circle"
-							, "verticalitemgap" : "5"
-							, "linestyle" : "1px dashed #4c4c4c"
-						};
-						
-var oBaseCategoryaxis =	{
-							  "id" 					: "categoryaxis"
-							, "titletextcolor"		: "#4c4c4c"
-							, "titletextfont"		: "bold 12pt '맑은 고딕'"
-							, "labeltextcolor"		: "#6f6f6f"
-							, "labeltextfont"		: "9pt '맑은 고딕'"
-							, "axislinestyle"		: "1px solid #525252"
-							, "ticklinestyle"		: "1px solid #525252"
-							, "boardlinestyle"		: "1px solid #d0d0d0"
-							, "ticksize"			: "5"
-							, "labelgap"			: "5"
-							, "labelrotate"			: "-30"
-						};
-						
-var oBaseValueaxis =	{
-							  "id" 					: "valueaxis"
-							, "boardlinevisible"	: true
-							, "boardlinestyle" 		: "1px solid #d0d0d0"
-							, "labeltextcolor" 		: "#6f6f6f"
-							, "labeltextfont" 		: "9pt/normal '맑은 고딕'"
-							, "titletextcolor" 		: "#4c4c4c"
-							, "titletextfont" 		: "bold 12pt '맑은 고딕'"
-							, "ticklinestyle" 		: "1px solid #525252"
-							, "axislinestyle" 		: "1px solid #525252"
-							, "labelgap" 			: "5"
-							, "ticksize" 			: "5"
-							, "autotickscale"		: "10"
-						};
-						
-var oBaseBarSeries =	{
-							  "barvisible" 			: true
-							, "barsize" 			: "75"
-							, "itemtextcolor"		: "#4c4c4c"
-							, "itemtextfont"		: "normal 10/normal '맑은 고딕'"
-							, "baritemtextgap"		: 5
-						};
 //////////////////////////////상수 설정부 START ////////////////////////////////////////////////////
 //////////////////////////////상수 설정부 END ////////////////////////////////////////////////////
 /*---------------------------------------------------------------------------------------------*
@@ -409,7 +334,7 @@ fn_GetModel = function(){
     }
 	
 	// 차트 기본속성 셋팅
-	fn_CopyObject(oChartAttr,oBaseChartAttr);
+	oChartAttr = this.fn_CloneObject(this.oBaseChartAttr);
 	
 	// 차트종류설정
 	if (sChartType == "bar") {
@@ -430,7 +355,7 @@ fn_GetModel = function(){
 	
 	// 타이틀설정
 	if (sTitletext != undefined || sSubTitletext != undefined) {
-		fn_CopyObject(oTitle,oBaseTitle);
+		oTitle = this.fn_CloneObject(this.oBaseTitle);
 		oTitle["text"] = sTitletext;
 		oTitle["subtext"] = sSubTitletext;
 		oTitle["align"] = sTitleAlign;
@@ -439,7 +364,7 @@ fn_GetModel = function(){
 	// 범례 설정
 	if (sLegendPosition != "none")
 	{
-		fn_CopyObject(oLegend,oBaseLegend);
+		oLegend = this.fn_CloneObject(this.oBaseLegend);
 		oLegend["align"] = sLegendPosition;
 	}
 	
@@ -466,9 +391,9 @@ fn_GetModel = function(){
 							"value"	: {
 								"title" 		: oTitle,
 								"legend" 		: oLegend,
-								"tooltip" 		: oBaseTooltip,
-								"board" 		: oBaseBoard,
-								"categoryaxis" 	: oBaseCategoryaxis,
+								"tooltip" 		: this.oBaseTooltip,
+								"board" 		: this.oBaseBoard,
+								"categoryaxis" 	: this.oBaseCategoryaxis,
 								"valueaxes" 	: fn_GetValueAxes(arrAxisY1Field,arrAxisY2Field),
 								"seriesset" 	: fn_GetSeries(arrSeriesField)
 							}
@@ -494,14 +419,14 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	
 	// 기본y축 추가
 	oValueAxes = {};
-	fn_CopyObject(oValueAxes,oBaseValueaxis);
+	oValueAxes = this.fn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
 	arrValueAxes.push(oValueAxes);
 	
 	// Y1추가
 	if (arrAxisY1Field.length > 0) {
 		oValueAxes = {};
-		fn_CopyObject(oValueAxes,oBaseValueaxis);
+		oValueAxes = this.fn_CloneObject(this.oBaseValueaxis);
 		oValueAxes["id"] = "valueaxis" + "y1";
 		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
 		arrValueAxes.push(oValueAxes);
@@ -510,7 +435,7 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	// Y2추가
 	if (arrAxisY2Field.length > 0) {
 		oValueAxes = {};
-		fn_CopyObject(oValueAxes,oBaseValueaxis);
+		oValueAxes = this.fn_CloneObject(this.oBaseValueaxis);
 		oValueAxes["id"] = "valueaxis" + "y2";
 		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
 		arrValueAxes.push(oValueAxes);
@@ -532,18 +457,18 @@ fn_GetSeries = function(arrSeriesField)
 	
 	var nCount = arrSeriesField.length;
 	
-	// layered 차트일때 사이즈 셋팅용.
+	// [BarChart] overlapping 차트일때 사이즈 셋팅용.
 	var nBarSizeMax = 80;
 	var nBarSizeMin = 20;
 	var nBarSizeGap = nexacro.round((nBarSizeMax - nBarSizeMin) / nCount);
 
-	//Model Field의 갯수 기준으로 Column 태그 생성
+	// arrSeriesField 갯수 기준으로 series 태그 생성
 	for(var i=0;i<nCount;i++)
 	{
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		fn_CopyObject(oSeries,oBaseBarSeries);
+		oSeries = this.fn_CloneObject(this.oBaseBarSeries);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;

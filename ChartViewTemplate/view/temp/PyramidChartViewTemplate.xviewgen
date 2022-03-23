@@ -7,87 +7,10 @@ o Developer   :
 o Create Date : 
 o Description : 
 *============================================================================================*/
+include "view_lib::util.xjs";
 include "view_lib::chart.xjs";
 
-var arrBaseChartColor = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
 
-var oBaseChartAttr =	{
-							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
-							//, "binddataset" : "viewdataset"
-							, "binddataset" : "dsData"
-						};
-						
-var oBaseTitle = 		{
-							  "id"					: "title"
-							, "textfont"			: "20pt/normal '맑은 고딕'"
-							, "padding"				: "0px 0px 5px"
-							, "subtextcolor"		: "gray"
-							, "subtextfont"			: "italic 8/normal 'Arial'"
-						};
-						
-var oBaseTooltip =		{
-							  "id"					: "tooltip"
-							, "background"			: "#4b4b4b"
-							, "linestyle"			: "0px none"
-							, "textcolor"			: "white"
-							, "textfont"			: "10pt/normal '맑은 고딕'"
-							, "padding"				: "5px"
-						};
-						
-var oBaseBoard =		{
-							  "id"					: "board"
-						};
-
-// var oBaseLegend = 		{
-// 							  "id" : "legend"
-// 							, "padding" : "3px 10px 3px 10px"
-// 							, "itemtextfont" : "9pt '맑은 고딕'"
-// 							, "itemtextcolor" : "#4c4c4c"
-// 							, "itemautofit" : "true"
-// 							, "markertextgap" : "5"
-// 							, "markertype" : "circle"
-// 							, "verticalitemgap" : "5"
-// 							, "linestyle" : "1px dashed #4c4c4c"
-// 						};
-						
-// var oBaseCategoryaxis =	{
-// 							  "id" 					: "categoryaxis"
-// 							, "titletextcolor"		: "#4c4c4c"
-// 							, "titletextfont"		: "bold 12pt '맑은 고딕'"
-// 							, "labeltextcolor"		: "#6f6f6f"
-// 							, "labeltextfont"		: "9pt '맑은 고딕'"
-// 							, "axislinestyle"		: "1px solid #525252"
-// 							, "ticklinestyle"		: "1px solid #525252"
-// 							, "boardlinestyle"		: "1px solid #d0d0d0"
-// 							, "ticksize"			: "5"
-// 							, "labelgap"			: "5"
-// 							, "labelrotate"			: "-30"
-// 						};
-						
-// var oBaseValueaxis =	{
-// 							  "id" 					: "valueaxis"
-// 							, "boardlinevisible"	: true
-// 							, "boardlinestyle" 		: "1px solid #d0d0d0"
-// 							, "labeltextcolor" 		: "#6f6f6f"
-// 							, "labeltextfont" 		: "9pt/normal '맑은 고딕'"
-// 							, "titletextcolor" 		: "#4c4c4c"
-// 							, "titletextfont" 		: "bold 12pt '맑은 고딕'"
-// 							, "ticklinestyle" 		: "1px solid #525252"
-// 							, "axislinestyle" 		: "1px solid #525252"
-// 							, "labelgap" 			: "5"
-// 							, "ticksize" 			: "5"
-// 							, "autotickscale"		: "10"
-// 						};
-						
-var oBasePyramidSeries =	{
- 							  "margintopdown"		: 10
- 							, "linestyle"			: "2px solid #ffffff"
- 							, "itemtextfont"		: "10pt/normal '맑은 고딕'"
- 							, "graphhalign"			: "center"
- 							, "itemtextguidesize"	: "30"
- 							, "autogradation"		: "none"
- 							, "marginleftright"		: "30"
-						};
 //////////////////////////////상수 설정부 START ////////////////////////////////////////////////////
 //////////////////////////////상수 설정부 END ////////////////////////////////////////////////////
 /*---------------------------------------------------------------------------------------------*
@@ -373,7 +296,7 @@ fn_GetModel = function(){
     }
 	
 	// 차트 기본속성 셋팅
-	fn_CopyObject(oChartAttr,oBaseChartAttr);
+	oChartAttr = this.fn_CloneObject(this.oBaseChartAttr);
 	
 	// 차트종류설정
 	if (sChartType == "funnel") {		// 깔때기
@@ -385,7 +308,7 @@ fn_GetModel = function(){
 	
 	// 타이틀설정
 	if (sTitletext != undefined || sSubTitletext != undefined) {
-		fn_CopyObject(oTitle,oBaseTitle);
+		oTitle = this.fn_CloneObject(this.oBaseTitle);
 		oTitle["text"] = sTitletext;
 		oTitle["subtext"] = sSubTitletext;
 		oTitle["align"] = sTitleAlign;
@@ -407,14 +330,14 @@ fn_GetModel = function(){
                 {
                     "tag" : "PyramidChart",
                     "attribute" : oChartAttr,
-                    "BasicChart" :
+                    "PyramidChart" :
                     [
                         {
                             "tag"	: "Contents",
 							"value"	: {
 								"title" 		: oTitle,
-								"tooltip" 		: oBaseTooltip,
-								"board" 		: oBaseBoard,
+								"tooltip" 		: this.oBaseTooltip,
+								"board" 		: this.oBaseBoard,
 								"seriesset" 	: fn_GetSeries(arrSeriesField)
 							}
                         }
@@ -446,13 +369,13 @@ fn_GetSeries = function(arrSeriesField)
 	
 	var nCount = arrSeriesField.length;
 	
-	//Model Field의 갯수 기준으로 Column 태그 생성
+	// arrSeriesField 갯수 기준으로 series 태그 생성
 	for(var i=0;i<nCount;i++)
 	{
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		fn_CopyObject(oSeries,oBasePyramidSeries);
+		oSeries = this.fn_CloneObject(this.oBasePyramidSeries);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
