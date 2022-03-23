@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ViewTemplateInfo version="1.0">
-  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="선도표(Line Chart)를 그려주는 템플릿"/>
+  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="방사형 그래프(RadarChart)를 그려주는 템플릿"/>
   <Script version="1.0" type="xscript5.1"><![CDATA[/**
-*  [Chart] LineChart View Template
-*  @FileName 	LineChartViewTemplate.xviewgen 
+*  [Chart] RadarChart View Template
+*  @FileName 	RadarChartViewTemplate.xviewgen 
 *  @Creator 	Creator
-*  @CreateDate 	2022.03.14
-*  @Desction    선도표(Line Chart)를 그려주는 템플릿
+*  @CreateDate 	2022.03.23
+*  @Desction    방사형 그래프(RadarChart)를 그려주는 템플릿
 ************** 소스 수정 이력 ***********************************************
 *  date          		Modifier                Description
 *******************************************************************************
-*  2022.03.14     		Creator       	      		최초 생성
+*  2022.03.23     		Creator       	      		최초 생성
 *******************************************************************************
 */
 /************************************************************************************************
@@ -80,7 +80,7 @@ fn_GetViewGenerationResult = function(fieldarray, contents, generationattr) {
 
 	//리턴 값
     var vResult = "";
-
+	
     //trace(">> fieldarray : " + fieldarray);
 	//trace(">> contents : " + contents);
     //trace(">> generationattr : " + generationattr);
@@ -146,20 +146,24 @@ fn_GetViewAttributeList = function() {
     var oViewAttr = {
                         "attributes": [
 							{
-                                "id": "linetype",
+                                "id": "seriestype",				// [RadarChart]
                                 "edittype": "Enum",
-                                "defaultvalue": "segment",
-                                "enumlist" : ["segment", "step", "curve"],
-                                "description": "차트의 유형을 설정."
-												+ "\n" + " - segment : 꺽은선 차트"
-												+ "\n" + " - step : 스텝 차트"
-												+ "\n" + " - curve : 곡선 차트"
+                                "defaultvalue": "line",
+                                "enumlist" : ["line", "linepoint", "area","areapoint"],
+                                "description": "시리즈의 표시 유형을 설정."
+												+ "\n" + " - line : 선 표시"
+												+ "\n" + " - linepoint : 선+점 표시"
+												+ "\n" + " - area : 영역 표시"
+												+ "\n" + " - areapoint : 영역+점 표시"
                             }
 							, {
-                                "id"			: "visiblepoint",
-                                "edittype" 		: "Boolean",
-								"defaultvalue"	: "true",
-                                "description"	: "라인에 점을 표시할지 여부"
+                                "id": "radartype",				// [RadarChart]
+                                "edittype": "Enum",
+                                "defaultvalue": "polygon",
+                                "enumlist" : ["polygon", "circle"],
+                                "description": "레이더 모양 설정"
+												+ "\n" + " - polygon : 다각형 모양"
+												+ "\n" + " - circle : 원형 모양"
                             }
 							, {									
                                 "id": "enableanimation",									
@@ -194,7 +198,7 @@ fn_GetViewAttributeList = function() {
                                 "description": "범례 표시 위치"
                             }
 							, {
-                                "id": "itemtextposition",		// [LineChart]
+                                "id": "itemtextposition",		// [RadarChart]
                                 "edittype": "Enum",
                                 "defaultvalue": "none",
                                 "enumlist" : ["none", "lefttop", "centertop", "righttop", "leftmiddle", "centermiddle", "rightmiddle", "leftbottom", "centerbottom", "rightbottom"],
@@ -247,20 +251,6 @@ fn_GetFieldUserAttributeList = function ()
 												+ "\n" + " - category : 데이터명 Field(1개)"
 												+ "\n" + " - series : 데이터값 Field(n개)"
                             }
-							, {
-                                "id"			: "valueaxes",
-                                "edittype" 		: "Enum",
-								"enumlist" 		: ["y", "y1", "y2"],
-								"defaultvalue"	: "y",
-                                "description"	: "데이터축을 설정. y는 왼쪽, y1,y2는 오른쪽에 표시됨."
-                            }
-// 							,{
-//                                 "id": "datatype",
-//                                 "edittype" : "Enum",
-// 								"enumlist" : ["normal", "number", "text", "currency"],
-// 								"defaultvalue" : "normal",
-//                                 "description" : "Field의 편집형식을 설정합니다."
-//                             }
                         ]
                   };
 				  
@@ -270,6 +260,7 @@ fn_GetFieldUserAttributeList = function ()
 
     return sFieldAttr;
 }
+
 /************************************************************************************************
  * 사용자 FUNCTION 영역
  ************************************************************************************************/
@@ -289,6 +280,7 @@ fn_GetModel = function(){
 	var oTitle = {};
 	var oLegend = {};
 	
+	var sRadarType = this.oGenerationAttr.attributes.radartype;
 	var sTitletext = this.oGenerationAttr.attributes.titletext;
 	var sSubTitletext = this.oGenerationAttr.attributes.subtitletext;
 	var sTitleAlign = this.oGenerationAttr.attributes.titlealign;
@@ -302,17 +294,14 @@ fn_GetModel = function(){
 	
 	var arrField = new Array(); 
 	var arrSeriesField = new Array();
-	var arrAxisY1Field = new Array();
-	var arrAxisY2Field = new Array();
 
-	var sDisplaytype, sValueaxes;
+	var sDisplaytype;
 	
 	//차트에서 사용할 모델 Field ID 리스트 만들기
     for(i=0;i<nFieldCount;i++)
     {
         oField = this.oFieldArray.fields[i];
 		sDisplaytype = oField.displaytype;
-		sValueaxes = oField.valueaxes;
 		
 		// this.oFieldArray Json Data로 Field Array() 셋팅
 		arrField.push(oField.id);
@@ -327,18 +316,14 @@ fn_GetModel = function(){
 			
 		} else if (sDisplaytype == "series") {
 			arrSeriesField.push(oField);
-			
-			// valueaxes에 따라 Y축 Array() 셋팅
-			if (sValueaxes == "y1") {
-				arrAxisY1Field.push(oField);
-			} else if (sValueaxes == "y2") {
-				arrAxisY2Field.push(oField);
-			}
 		}
     }
 	
 	// 차트 기본속성 셋팅
 	oChartAttr = this.lfn_CloneObject(this.oBaseChartAttr);
+	
+	// 레이더 모양 설정
+	oChartAttr["radartype"] = sRadarType;
 	
 	// 에니메이션 설정
 	oChartAttr["enableanimation"] = this.oGenerationAttr.attributes.enableanimation;
@@ -372,9 +357,9 @@ fn_GetModel = function(){
             "Components" :
             [
                 {
-                    "tag" : "BasicChart",
+                    "tag" : "RadarChart",
                     "attribute" : oChartAttr,
-                    "BasicChart" :
+                    "RadarChart" :
                     [
                         {
                             "tag"	: "Contents",
@@ -384,7 +369,7 @@ fn_GetModel = function(){
 								"tooltip" 		: this.oBaseTooltip,
 								"board" 		: this.oBaseBoard,
 								"categoryaxis" 	: this.oBaseCategoryaxis,
-								"valueaxes" 	: fn_GetValueAxes(arrAxisY1Field,arrAxisY2Field),
+								"valueaxes" 	: fn_GetValueAxes(),
 								"seriesset" 	: fn_GetSeries(arrSeriesField)
 							}
                         }
@@ -398,7 +383,7 @@ fn_GetModel = function(){
 };
 
 // 데이터 축 설정
-fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
+fn_GetValueAxes = function()
 {
 	var arrValueAxes = new Array();
 	var oValueAxes;
@@ -412,24 +397,6 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
 	arrValueAxes.push(oValueAxes);
-	
-	// Y1추가
-	if (arrAxisY1Field.length > 0) {
-		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
-		oValueAxes["id"] = "valueaxis" + "y1";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		arrValueAxes.push(oValueAxes);
-	}
-	
-	// Y2추가
-	if (arrAxisY2Field.length > 0) {
-		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
-		oValueAxes["id"] = "valueaxis" + "y2";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		arrValueAxes.push(oValueAxes);
-	}
 
     return arrValueAxes;
 }
@@ -437,8 +404,7 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 // 시리즈 셋팅
 fn_GetSeries = function(arrSeriesField)
 {
-	var sLineType = this.oGenerationAttr.attributes.linetype;
-	var bVisiblePoint = this.oGenerationAttr.attributes.visiblepoint;
+	var sSeriesType = this.oGenerationAttr.attributes.seriestype;
 	var sItemTextPosition = this.oGenerationAttr.attributes.itemtextposition;
 	var sChartDisplay = this.oGenerationAttr.attributes.chartdisplay;
 	
@@ -455,16 +421,20 @@ fn_GetSeries = function(arrSeriesField)
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		oSeries = this.lfn_CloneObject(this.oBaseSeriesLine);
+		oSeries = this.lfn_CloneObject(this.oBaseSeriesRadar);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
 		
-		// [LineChart] 선유형설정
-		oSeries["linetype"] = sLineType;
-	
-		// [LineChart] 라인에 점을 표시할지 여부
-		oSeries["pointvisible"] = bVisiblePoint;
+		// [RadaChart] 시리즈의 표시 유형을 설정
+		if (sSeriesType == "linepoint")	{				// 선+점 표시
+			oSeries["pointvisible"] = true;
+		} else if (sSeriesType == "area")	{			// 영역 표시
+			oSeries["lineareavisible"] = true;
+		} else if (sSeriesType == "areapoint")	{		// 영역+점 표시
+			oSeries["lineareavisible"] = true;
+			oSeries["pointvisible"] = true;
+		}
 		
 		// 데이터 출력설정
 		if (sItemTextPosition == "none") {
@@ -473,22 +443,13 @@ fn_GetSeries = function(arrSeriesField)
 			oSeries["itemtextvisible"] = true;
 			//oSeries["itemtexttype"] = oField.datatype;
 			
-			// [LineChart]
-			if(oSeries["pointvisible"]) {
+			// [RadaChart]
+			if (oSeries["pointvisible"]) {
 				oSeries["pointitemtextposition"] = sItemTextPosition;
 			} else {
-				oSeries["lineitemtextposition"] = sItemTextPosition;		
+				oSeries["lineitemtextposition"] = sItemTextPosition;
 			}
 		}
-		
-		// Y축설정
-		if (oField.valueaxes == "y1") {
-			oSeries["valueaxis"] = "valueaxisy1";
-		} else if (oField.valueaxes == "y2") {
-			oSeries["valueaxis"] = "valueaxisy2";
-		}
-		
-		
 		
 		arrSeries.push(oSeries);
 	}

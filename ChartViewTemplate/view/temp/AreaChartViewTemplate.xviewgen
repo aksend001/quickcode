@@ -301,7 +301,6 @@ fn_GetModel = function(){
 	var oLegend = {};
 	
 	var sChartDisplay = this.oGenerationAttr.attributes.chartdisplay;
-	var sLineType = this.oGenerationAttr.attributes.linetype;
 	var sTitletext = this.oGenerationAttr.attributes.titletext;
 	var sSubTitletext = this.oGenerationAttr.attributes.subtitletext;
 	var sTitleAlign = this.oGenerationAttr.attributes.titlealign;
@@ -359,10 +358,6 @@ fn_GetModel = function(){
 	} else if (sChartDisplay == "100%stacked") {
 		oChartAttr["stacktype"] = "percent";
 	}
-	
-	// 선유형설정
-	this.oBaseAreaSeries["linetype"] = sLineType;
-	
 	
 	// 에니메이션 설정
 	oChartAttr["enableanimation"] = this.oGenerationAttr.attributes.enableanimation;
@@ -461,6 +456,7 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 // 시리즈 셋팅
 fn_GetSeries = function(arrSeriesField)
 {
+	var sLineType = this.oGenerationAttr.attributes.linetype;
 	var sItemTextPosition = this.oGenerationAttr.attributes.itemtextposition;
 	var sChartDisplay = this.oGenerationAttr.attributes.chartdisplay;
 	
@@ -477,10 +473,13 @@ fn_GetSeries = function(arrSeriesField)
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		oSeries = this.lfn_CloneObject(this.oBaseAreaSeries);
+		oSeries = this.lfn_CloneObject(this.oBaseSeriesArea);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
+		
+		// 선유형설정
+		oSeries["linetype"] = sLineType;
 		
 		// 데이터 출력설정
 		if (sItemTextPosition == "none") {

@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ViewTemplateInfo version="1.0">
-  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="버블차트(BubbleChart),산점도(SatterPlot)를 그려주는 템플릿"/>
+  <ViewTemplate id="ColumnChartViewTemplate" viewtype="Chart" description="분산형차트를 그려주는 템플릿&#13;&#10;- BubbleChart : 버블차트&#13;&#10;- SatterPlot : 산점도"/>
   <Script version="1.0" type="xscript5.1"><![CDATA[/**
 *  [Chart] BubbleChart View Template
 *  @FileName 	BubbleChartViewTemplate.xviewgen 
 *  @Creator 	Creator
 *  @CreateDate 	2022.03.21
-*  @Desction    버블차트(BubbleChart),산점도(SatterPlot)를 그려주는 템플릿
+*  @Desction    분산형차트를 그려주는 템플릿
+*  					- BubbleChart : 버블차트
+*  					- SatterPlot : 산점도
 ************** 소스 수정 이력 ***********************************************
 *  date          		Modifier                Description
 *******************************************************************************
@@ -436,6 +438,7 @@ fn_GetSeries = function(oBubbleField,nCount)
 	var arrSeries = new Array();
 	var oSeries;
 	
+	var sSeriesId = "";
 	var sSeriesName;
 	var arrBubbleField;
 	var oFieldSeriesX, oFieldSeriesY, oFieldSeriesB;
@@ -460,9 +463,13 @@ fn_GetSeries = function(oBubbleField,nCount)
 			continue;
 		}
 		
+		// 한글제거
+		sSeriesId = sSeriesName.replace(/[^a-z|0-9]/gi,"");
+		sSeriesId = "series" + this.lfn_Decode(sSeriesId, "", "", "_" + sSeriesId);
+		
 		oSeries = {};
-		oSeries = this.lfn_CloneObject(this.oBaseBubbleSeries);
-		oSeries["id"] = fn_GetCompId("series" + "_" + sSeriesName);		// TODO : 한글입력시
+		oSeries = this.lfn_CloneObject(this.oBaseSeriesBubble);
+		oSeries["id"] = this.lfn_GetCompId(sSeriesId);
 		oSeries["titletext"] = sSeriesName;
 		oSeries["valuecolumn"] = "bind:" + oFieldSeriesX.id;
 		oSeries["value2column"] = "bind:" + oFieldSeriesY.id;

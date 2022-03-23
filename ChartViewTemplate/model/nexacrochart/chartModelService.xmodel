@@ -35,6 +35,12 @@
       <Field required="false" id="FERTILITY_RATE_3" label="Fertility Rate" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
       <Field required="false" id="POPULATION_3" label="Population" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
     </Model>
+    <Model id="radarmodel" name="radarmodel" iotype="output" description="RadarChart용 model">
+      <Field required="false" id="catName" label="category" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="year2020" label="2020" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="year2021" label="2021" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="year2022" label="2022" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+    </Model>
   </Models>
   <Service id="" name="" url=""/>
 </ModelInfo>

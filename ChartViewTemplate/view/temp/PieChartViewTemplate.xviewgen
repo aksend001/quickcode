@@ -353,15 +353,9 @@ fn_GetModel = function(){
 	// 차트 기본속성 셋팅
 	oChartAttr = this.lfn_CloneObject(this.oBaseChartAttr);
 	
-	// 차트유형설정
-	if (sChartDisplay == "semicircle") {		// 반원
-		this.oBasePieSeries["startangle"] = "270";
-		this.oBasePieSeries["endangle"] = "180";
-	}
-	
 	// 도넛차트 내부 안쪽 원의 지름 크기, 텍스트 설정
 	if (sChartType == "doughnut") {
-		this.oBasePieSeries["innerradius"] = this.oGenerationAttr.attributes.innerradius;
+		this.oBaseSeriesPie["innerradius"] = this.oGenerationAttr.attributes.innerradius;
 		this.oBaseBoard["text"] = this.oGenerationAttr.attributes.innertext;
 	}
 	
@@ -392,8 +386,8 @@ fn_GetModel = function(){
 	
 	// 선택 필드 설정
 	if (sSelectId != undefined) {
-		this.oBasePieSeries["selectcolumn"] = "bind:" + sSelectId;
-		this.oBasePieSeries["selecttype"] = "bind";
+		this.oBaseSeriesPie["selectcolumn"] = "bind:" + sSelectId;
+		this.oBaseSeriesPie["selecttype"] = "bind";
 	}
 	
 	//차트 컴포넌트 추가
@@ -444,10 +438,16 @@ fn_GetSeries = function(arrSeriesField)
 		oField = arrSeriesField[i];
 		
 		oSeries = {};
-		oSeries = this.lfn_CloneObject(this.oBasePieSeries);
+		oSeries = this.lfn_CloneObject(this.oBaseSeriesPie);
 		oSeries["id"] = "series" + oField.id;
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
+		
+		// 차트유형설정
+		if (sChartDisplay == "semicircle") {		// 반원
+			oSeries["startangle"] = "270";
+			oSeries["endangle"] = "180";
+		}
 		
 		// 데이터 출력설정
 // 		if (sItemTextPosition == "none") {

@@ -66,7 +66,7 @@ this.oBaseValueaxis =	{
 							, "autotickscale"		: "10"
 						};
 						
-this.oBaseBarSeries =	{
+this.oBaseSeriesBar =	{
 							  "barvisible" 			: true
 							, "barsize" 			: "75"
 							, "itemtextcolor"		: "#4c4c4c"
@@ -74,7 +74,7 @@ this.oBaseBarSeries =	{
 							, "baritemtextgap"		: 5
 						};
 
-this.oBaseLineSeries =	{
+this.oBaseSeriesLine =	{
 							  "barvisible" 			: false
 							, "linevisible" 		: true
 							, "pointsize"			: "7"
@@ -84,7 +84,7 @@ this.oBaseLineSeries =	{
 							, "pointitemtextgap"	: 5
 						};
 						
-this.oBaseAreaSeries =	{
+this.oBaseSeriesArea =	{
 							  "barvisible" 			: false
 							, "linevisible" 		: true
 							, "lineareavisible"		: true
@@ -94,7 +94,7 @@ this.oBaseAreaSeries =	{
 							, "lineitemtextgap"		: 5
 						};
 
-this.oBasePieSeries =	{
+this.oBaseSeriesPie =	{
 							  "radius" 					: "60"
 							, "opacity" 				: "0.8"
 							, "linestyle" 				: "1px solid #ffffff"
@@ -112,7 +112,7 @@ this.oBasePieSeries =	{
 							, "highlightlinestyle"		: "1px solid #ffffff"
 						};
 
-this.oBasePyramidSeries =	{
+this.oBaseSeriesPyramid =	{
  							  "margintopdown"		: 10
  							, "linestyle"			: "2px solid #ffffff"
 							, "fillstyle" 			: this.arrBaseChartColor.toString()
@@ -123,7 +123,14 @@ this.oBasePyramidSeries =	{
  							, "marginleftright"		: "30"
 						};
 						
-this.oBaseBubbleSeries =	{
+this.oBaseSeriesBubble =	{
 							  "itemtextfont"	: "bold 8pt '맑은 고딕'"
+						};
+									
+this.oBaseSeriesRadar =	{
+							  "linevisible"			: true
+ 							, "itemtextfont"		: "8pt '맑은 고딕'"
+ 							, "lineareaopacity"		: "0.5"
+							, "pointsize"			: "7"
 						};
 //----------------------------- 차트 디자인관련 상수 설정부 END -----------------------------------]]></Script>
