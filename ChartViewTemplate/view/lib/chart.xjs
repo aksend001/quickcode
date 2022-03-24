@@ -1,11 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Script version="1.0" type="xscript5.1"><![CDATA[//----------------------------- 차트 디자인관련 상수 설정부 START ---------------------------------
+<Script version="1.0" type="xscript5.1"><![CDATA[
+this.ENUM_INPUT = "input";
+//----------------------------- 차트 디자인관련 상수 설정부 START ---------------------------------
+// 차트색상 - Category10
 this.arrBaseChartColor = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+
+// 컬러 Array [참고] https://observablehq.com/@d3/color-schemes#Category10 
+this.arrColorCategory10 = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+this.arrColorTableau10 = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"];
+this.arrColorAccent = ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"];
 
 this.oBaseChartAttr =	{
 							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
+							, "legendspacing"	: "10px"
 							//, "binddataset" : "viewdataset"
-							, "binddataset" : "dsData"
+							, "binddataset" 	: "dsData"
 						};
 						
 this.oBaseTitle = 		{
@@ -133,4 +142,60 @@ this.oBaseSeriesRadar =	{
  							, "lineareaopacity"		: "0.5"
 							, "pointsize"			: "7"
 						};
-//----------------------------- 차트 디자인관련 상수 설정부 END -----------------------------------]]></Script>
+						
+this.oBaseSeriesRose =	{
+							  "linevisible"			: true
+ 							, "itemtextfont"		: "8pt '맑은 고딕'"
+						};
+
+this.oBaseIndicator =	{
+							  "id"					: "indicator"
+ 							, "visible"				: "true"
+ 							, "indicatorimage"		: ""
+ 							, "indicatorsize"		: ""
+ 							, "indicatorindent"		: ""
+ 							, "indicatorfillstyle"	: "white"
+ 							, "indicatorlinestyle"	: "1px solid black"
+ 							, "indicatoropacity"	: "1"
+ 							, "linestyle"			: "1px solid black"
+ 							, "fillstyle"			: "white"
+ 							, "opacity"				: "1"
+						};
+						
+this.oBaseSeriesGauge =	{
+							  "id"				: "series"
+ 							, "itemtextfont"	: "bold 12pt '맑은 고딕'"
+							, "radius"			: "100"
+							, "userrangeradius"	: "100"
+							, "opacity"			: "0.5"
+							, "barsize"			: "100"
+							, "baropacity"		: "1"
+						};
+
+this.oBaseSeriesBarGauge =	{
+							  "id"				: "series"
+ 							, "itemtextcolor"	: "#ffffff"
+							, "itemtextfont"	: "bold 20pt '맑은 고딕'"
+							, "opacity"			: "0.5"
+							, "barsize"			: "80"
+							, "baropacity"		: "1"
+						};
+//----------------------------- 차트 디자인관련 상수 설정부 END -----------------------------------
+
+/**
+ * @class 색상배열에서 Index에 해당하는 Chart 색상을 반환한다.
+ * @param {number} nIdx - 색상 Index
+ * @param {array} arrColor - 16진 색상코드 배열
+ * @return {string} 16진 색상코드
+ * @example
+ * var sColor = this.lfn_GetChartColor(0);	// "#1f77b4" <br>
+ * var sColor2 = this.lfn_GetChartColor(0,this.arrColorTableau10);	// "#4e79a7"
+ */
+this.lfn_GetChartColor = function(nIdx,arrColor)
+{
+	if (this.lfn_IsNull(arrColor))		arrColor = this.arrBaseChartColor;
+	
+	var nArrIdx = nIdx % arrColor.length;
+	return arrColor[nArrIdx];
+};
+]]></Script>

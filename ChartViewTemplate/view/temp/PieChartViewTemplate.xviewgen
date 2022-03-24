@@ -439,7 +439,7 @@ fn_GetSeries = function(arrSeriesField)
 		
 		oSeries = {};
 		oSeries = this.lfn_CloneObject(this.oBaseSeriesPie);
-		oSeries["id"] = "series" + oField.id;
+		oSeries["id"] = this.lfn_GetCompId("series" + " " + oField.id);
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
 		
