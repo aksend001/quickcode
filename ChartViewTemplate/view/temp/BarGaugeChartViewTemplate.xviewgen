@@ -490,7 +490,6 @@ fn_GetSeries = function(arrSeriesField)
 			oSeries["opacity"] = "0.5";
 			oSeries["fillstyle"] = sSetColor;
 			oSeries["linestyle"] = "1px solid " + sSetColor;
-			oSeries["itemtextcolor"] = sSetColor;
 		}
 		
 		// 데이터 출력설정

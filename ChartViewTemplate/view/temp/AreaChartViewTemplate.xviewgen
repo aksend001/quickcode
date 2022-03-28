@@ -438,6 +438,8 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 		oValueAxes["id"] = "valueaxis" + "y1";
 		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
+		delete oValueAxes["boardlinevisible"];			// 라인제거
+		
 		arrValueAxes.push(oValueAxes);
 	}
 	
@@ -447,6 +449,8 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 		oValueAxes["id"] = "valueaxis" + "y2";
 		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
+		delete oValueAxes["boardlinevisible"];			// 라인제거
+		
 		arrValueAxes.push(oValueAxes);
 	}
 

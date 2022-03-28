@@ -6,9 +6,16 @@ this.ENUM_INPUT = "input";
 this.arrBaseChartColor = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
 
 // 컬러 Array [참고] https://observablehq.com/@d3/color-schemes#Category10 
-this.arrColorCategory10 = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
-this.arrColorTableau10 = ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"];
-this.arrColorAccent = ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"];
+this.arrColorCategory10	= ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+this.arrColorTableau10	= ["#4e79a7","#f28e2c","#e15759","#76b7b2","#59a14f","#edc949","#af7aa1","#ff9da7","#9c755f","#bab0ab"];
+this.arrColorAccent		= ["#7fc97f","#beaed4","#fdc086","#ffff99","#386cb0","#f0027f","#bf5b17","#666666"];
+this.arrColorDark2		= ["#1b9e77","#d95f02","#7570b3","#e7298a","#66a61e","#e6ab02","#a6761d","#666666"];
+this.arrColorPaired		= ["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"];
+this.arrColorPastel1	= ["#fbb4ae","#b3cde3","#ccebc5","#decbe4","#fed9a6","#ffffcc","#e5d8bd","#fddaec","#f2f2f2"];
+this.arrColorPastel2	= ["#b3e2cd","#fdcdac","#cbd5e8","#f4cae4","#e6f5c9","#fff2ae","#f1e2cc","#cccccc"];
+this.arrColorSet1		= ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"];
+this.arrColorSet2		= ["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854","#ffd92f","#e5c494","#b3b3b3"];
+this.arrColorSet3		= ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"];
 
 this.oBaseChartAttr =	{
 							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
@@ -58,7 +65,6 @@ this.oBaseCategoryaxis =	{
 							, "boardlinestyle"		: "1px solid #d0d0d0"
 							, "ticksize"			: "5"
 							, "labelgap"			: "5"
-							, "labelrotate"			: "-30"
 						};
 this.oBaseValueaxis =	{
 							  "id" 					: "valueaxis"
@@ -133,7 +139,7 @@ this.oBaseSeriesPyramid =	{
 						};
 						
 this.oBaseSeriesBubble =	{
-							  "itemtextfont"	: "bold 8pt '맑은 고딕'"
+							  "itemtextfont"		: "bold 8pt '맑은 고딕'"
 						};
 									
 this.oBaseSeriesRadar =	{
@@ -163,23 +169,34 @@ this.oBaseIndicator =	{
 						};
 						
 this.oBaseSeriesGauge =	{
-							  "id"				: "series"
- 							, "itemtextfont"	: "bold 12pt '맑은 고딕'"
-							, "radius"			: "100"
-							, "userrangeradius"	: "100"
-							, "opacity"			: "0.5"
-							, "barsize"			: "100"
-							, "baropacity"		: "1"
+							  "id"					: "series"
+ 							, "itemtextfont"		: "bold 12pt '맑은 고딕'"
+							, "radius"				: "100"
+							, "userrangeradius"		: "100"
+							, "opacity"				: "0.5"
+							, "barsize"				: "100"
+							, "baropacity"			: "1"
 						};
 
 this.oBaseSeriesBarGauge =	{
-							  "id"				: "series"
- 							, "itemtextcolor"	: "#ffffff"
-							, "itemtextfont"	: "bold 20pt '맑은 고딕'"
-							, "opacity"			: "0.5"
-							, "barsize"			: "80"
-							, "baropacity"		: "1"
+							  "id"					: "series"
+ 							, "itemtextcolor"		: "#ffffff"
+							, "itemtextfont"		: "bold 20pt '맑은 고딕'"
+							, "opacity"				: "0.5"
+							, "barsize"				: "80"
+							, "baropacity"			: "1"
 						};
+						
+this.oBaseSeriesFloat =	{
+ 							  "id"					: "series"
+							, "barvisible" 			: true
+ 							, "linevisible" 		: true
+ 							, "barsize" 			: "50"
+ 							, "itemtextcolor" 		: "#ffffff"
+ 							, "itemtextfont" 		: "bold 10pt '맑은 고딕'"
+ 							, "baropacity" 			: "0.8"
+							, "highlightbarvisible"	: "true"
+					}
 //----------------------------- 차트 디자인관련 상수 설정부 END -----------------------------------
 
 /**
