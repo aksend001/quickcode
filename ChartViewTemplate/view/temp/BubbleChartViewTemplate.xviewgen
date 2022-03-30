@@ -322,22 +322,22 @@ fn_GetModel = function(){
 		
 		// displaytype에 따라 Array() 셋팅
 		if (sDisplaytype == "seriesx") {
-			if (arrSeriesField[0] == undefined) {
+			if (this.lfn_IsNull(arrSeriesField[0])) {
 				arrSeriesField[0] = oField;
 			} else {
-				this.lfn_Log(sSeriesName + "의 seriesx가 여러개 설정되었습니다.","warn");
+				this.lfn_Log(sSeriesName + "의 seriesx가 여러개 설정되었습니다.(동일한 seriesname 당 1개의 필드만 설정가능합니다)","warn");
 			}
 		} else if (sDisplaytype == "seriesy") {
-			if (arrSeriesField[1] == undefined) {
+			if (this.lfn_IsNull(arrSeriesField[1])) {
 				arrSeriesField[1] = oField;
 			} else {
-				this.lfn_Log(sSeriesName + "의 seriesy가 여러개 설정되었습니다.","warn");
+				this.lfn_Log(sSeriesName + "의 seriesy가 여러개 설정되었습니다.(동일한 seriesname 당 1개의 필드만 설정가능합니다)","warn");
 			}
 		} else if (sDisplaytype == "bubblesize") {
-			if (arrSeriesField[2] == undefined) {
+			if (this.lfn_IsNull(arrSeriesField[2])) {
 				arrSeriesField[2] = oField;
 			} else {
-				this.lfn_Log(sSeriesName + "의 bubblesize가 여러개 설정되었습니다.","warn");
+				this.lfn_Log(sSeriesName + "의 bubblesize가 여러개 설정되었습니다.(동일한 seriesname 당 1개의 필드만 설정가능합니다)","warn");
 			}
 		}
     }
@@ -349,18 +349,20 @@ fn_GetModel = function(){
 	oChartAttr["enableanimation"] = this.oGenerationAttr.attributes.enableanimation;
 	
 	// 타이틀설정
-	if (sTitletext != undefined || sSubTitletext != undefined) {
-		oTitle = this.lfn_CloneObject(this.oBaseTitle);
+	oTitle = this.lfn_CloneObject(this.oBaseTitle);
+	if (this.lfn_IsNotNull(sTitletext) || this.lfn_IsNotNull(sSubTitletext)) {
 		oTitle["text"] = sTitletext;
 		oTitle["subtext"] = sSubTitletext;
 		oTitle["align"] = sTitleAlign;
+		oTitle["visible"] = true;
 	}
 				
 	// 범례 설정
-	if (sLegendPosition != "none")
+	oLegend = this.lfn_CloneObject(this.oBaseLegend);
+	if (this.lfn_IsNotNull(sLegendPosition) && sLegendPosition != "none")
 	{
-		oLegend = this.lfn_CloneObject(this.oBaseLegend);
 		oLegend["align"] = sLegendPosition;
+		oLegend["visible"] = true;
 	}
 	
 	//차트 컴포넌트 추가
@@ -400,8 +402,9 @@ fn_GetValueAxes = function(oBubbleField,nCount)
 	var sXAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.xaxistitletext);
 	var sYAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.yaxistitletext);
 	
-	var arrValueAxes = new Array();
 	var oValueAxes;
+	var arrValueAxes = new Array();
+	var arrMaskInfo = new Array();
 	
 	var sFirstSeriesName, arrFirstBubbleField;
 	var oFieldX, oFieldY;
@@ -424,9 +427,12 @@ fn_GetValueAxes = function(oBubbleField,nCount)
 	oValueAxes["id"]		= "valueaxis" + "x";
 	oValueAxes["titletext"]	= this.lfn_Trim(sXAxisTitleText);
 	
-	if (oFieldX == undefined) {
+	if (this.lfn_IsNull(oFieldX)) {
 		this.lfn_Log("seriesx가 설정되지 않았습니다.","error");
 	} else {
+		arrMaskInfo = this.lfn_GetDataTypeMask(oFieldX.datatype);
+		oValueAxes["labelmask"] = arrMaskInfo[0];
+		oValueAxes["labeltype"] = arrMaskInfo[1];
 	}
 	
 	arrValueAxes.push(oValueAxes);
@@ -437,9 +443,12 @@ fn_GetValueAxes = function(oBubbleField,nCount)
 	oValueAxes["id"] = "valueaxis" + "y";
 	oValueAxes["titletext"]	= this.lfn_Trim(sYAxisTitleText);
 
-	if (oFieldY == undefined) {
+	if (this.lfn_IsNull(oFieldY)) {
 		this.lfn_Log("seriesy가 설정되지 않았습니다.","error");
 	} else {
+		arrMaskInfo = this.lfn_GetDataTypeMask(oFieldY.datatype);
+		oValueAxes["labelmask"] = arrMaskInfo[0];
+		oValueAxes["labeltype"] = arrMaskInfo[1];
 	}
 	arrValueAxes.push(oValueAxes);
 
@@ -458,6 +467,7 @@ fn_GetSeries = function(oBubbleField,nCount)
 	var sSeriesName;
 	var arrBubbleField;
 	var oFieldSeriesX, oFieldSeriesY, oFieldSeriesB;
+	var arrMaskInfo = new Array();
 	
 	//Model Field의 갯수 기준으로 Column 태그 생성
 	for(var i=0;i<nCount;i++)
@@ -469,17 +479,25 @@ fn_GetSeries = function(oBubbleField,nCount)
 		oFieldSeriesY = arrBubbleField[1];
 		oFieldSeriesB = arrBubbleField[2];
 		
-		if (oFieldSeriesX == undefined) {
+		if (this.lfn_IsNull(oFieldSeriesX)) {
 			this.lfn_Log(sSeriesName + "의 seriesx가 설정되지 않았습니다.","error");
 			continue;
 		}
 		
-		if (oFieldSeriesY == undefined) {
+		if (this.lfn_GetDataTypeMask(oFieldSeriesX.datatype)[2] != "number") {
+			this.lfn_Log(sSeriesName + "의 seriesx값에 숫자형 데이터를 지정하세요.","warn");
+		}
+		
+		if (this.lfn_IsNull(oFieldSeriesY)) {
 			this.lfn_Log(sSeriesName + "의 seriesy가 설정되지 않았습니다.","error");
 			continue;
 		}
 		
-		// 한글제거
+		if (this.lfn_GetDataTypeMask(oFieldSeriesY.datatype)[2] != "number") {
+			this.lfn_Log(sSeriesName + "의 seriesy값에 숫자형 데이터를 지정하세요.","warn");
+		}
+		
+		// 한글제거(String으로 입력받은 시리즈명을 기준으로 id설정)
 		sSeriesId = sSeriesName.replace(/[^a-z|0-9]/gi,"");
 		sSeriesId = "series" + this.lfn_Decode(sSeriesId, "", "", "_" + sSeriesId);
 		
@@ -494,7 +512,11 @@ fn_GetSeries = function(oBubbleField,nCount)
 		oSeries["fillstyle"] = this.lfn_GetChartColor(i);
 		oSeries["linestyle"] = this.SERIES_LINE_STYLE + " " + this.lfn_GetChartColor(i);
 		
-		if (oFieldSeriesB != undefined) {
+		if (this.lfn_IsNotNull(oFieldSeriesB)) {
+			if (this.lfn_GetDataTypeMask(oFieldSeriesB.datatype)[2] != "number") {
+				this.lfn_Log(sSeriesName + "의 bubblesize값에 숫자형 데이터를 지정하세요.","warn");
+			}
+		
 			oSeries["value3column"] = "bind:" + oFieldSeriesB.id;
 			oSeries["opacity"] = "0.5";
 		}
@@ -503,11 +525,14 @@ fn_GetSeries = function(oBubbleField,nCount)
 		if (sItemTextPosition == "none") {
 			oSeries["itemtextvisible"] = false;
 		} else {
+			arrMaskInfo = this.lfn_GetDataTypeMask(oFieldSeriesX.datatype);
+			
 			oSeries["itemtextvisible"] = true;
-			//oSeries["itemtexttype"] = oField.datatype;
+			oSeries["itemtextmask"]			= arrMaskInfo[0];
+			oSeries["itemtexttype"]			= arrMaskInfo[1];
 			
 			// [BubbleChart]
-			oSeries["baritemtextposition"] = sItemTextPosition;
+			oSeries["itemtextposition"] = sItemTextPosition;
 		}
 		
 		arrSeries.push(oSeries);

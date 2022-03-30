@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Script version="1.0" type="xscript5.1"><![CDATA[
-this.ENUM_INPUT = "input";
+<Script version="1.0" type="xscript5.1"><![CDATA[this.ENUM_INPUT = "input";
 
 //----------------------------- 차트 디자인관련 상수 설정부 START ---------------------------------
 // 차트색상 - Category10
-this.arrBaseChartColor = ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"];
+this.arrBaseChartColor = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
 
 // 컬러 Array [참고] https://observablehq.com/@d3/color-schemes#Category10 
 this.arrColorCategory10	= ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
@@ -18,20 +17,25 @@ this.arrColorSet1		= ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33
 this.arrColorSet2		= ["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854","#ffd92f","#e5c494","#b3b3b3"];
 this.arrColorSet3		= ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"];
 
+// 차트 기본속성
 this.oBaseChartAttr =	{
 							"id" : "chart", "left" : 0,  "top" : 0, "right" : 0, "bottom" : 0
 							, "legendspacing"	: "10px"
 							//, "binddataset" : "viewdataset"
 							, "binddataset" 	: "dsData"
 						};
-						
+
+// 타이틀 기본속성
 this.oBaseTitle = 		{
 							  "id"					: "title"
 							, "textfont"			: "20pt/normal '맑은 고딕'"
 							, "padding"				: "0px 0px 5px"
 							, "subtextcolor"		: "gray"
 							, "subtextfont"			: "italic 8/normal 'Arial'"
+							, "visible"				: false
 						};
+
+// 툴팁 기본속성
 this.oBaseTooltip =		{
 							  "id"					: "tooltip"
 							, "background"			: "#4b4b4b"
@@ -40,21 +44,27 @@ this.oBaseTooltip =		{
 							, "textfont"			: "10pt/normal '맑은 고딕'"
 							, "padding"				: "5px"
 						};
+
+// 배경 기본속성
 this.oBaseBoard =		{
 							  "id"					: "board"
 						};
 
+// 범례 기본속성
 this.oBaseLegend = 		{
-							  "id" : "legend"
-							, "padding" : "3px 10px 3px 10px"
-							, "itemtextfont" : "9pt '맑은 고딕'"
-							, "itemtextcolor" : "#4c4c4c"
-							, "itemautofit" : "true"
-							, "markertextgap" : "5"
-							, "markertype" : "circle"
-							, "verticalitemgap" : "5"
-							, "linestyle" : "1px dashed #4c4c4c"
+							  "id" 					: "legend"
+							, "padding" 			: "3px 10px 3px 10px"
+							, "itemtextfont" 		: "9pt '맑은 고딕'"
+							, "itemtextcolor" 		: "#4c4c4c"
+							, "itemautofit" 		: "true"
+							, "markertextgap" 		: "5"
+							, "markertype" 			: "circle"
+							, "verticalitemgap" 	: "5"
+							, "linestyle" 			: "1px dashed #4c4c4c"
+							, "visible"				: false
 						};
+
+// 카테고리축(x축) 기본속성
 this.oBaseCategoryaxis =	{
 							  "id" 					: "categoryaxis"
 							, "titletextcolor"		: "#4c4c4c"
@@ -67,7 +77,8 @@ this.oBaseCategoryaxis =	{
 							, "ticksize"			: "5"
 							, "labelgap"			: "5"
 						};
-						
+
+// 데이터축(y축) 기본속성
 this.oBaseValueaxis =	{
 							  "id" 					: "valueaxis"
 							, "boardlinevisible"	: true
@@ -82,7 +93,8 @@ this.oBaseValueaxis =	{
 							, "ticksize" 			: "5"
 							, "autotickscale"		: "10"
 						};
-						
+
+// 데이터축(y2축) 기본속성
 this.oBaseValueaxis2 =	{
 							  "id" 					: "valueaxisy2"
 							, "boardlinevisible"	: false							// 라인표시안함.
@@ -99,6 +111,7 @@ this.oBaseValueaxis2 =	{
 							, "autotickscale"		: "10"
 						};
 
+// [TimeLineChart] 데이터축 기본속성
 this.oBaseValueaxisTime =	{
 							  "id"					: "valueaxistime"
 							, "labeltextcolor"		: "#6f6f6f"
@@ -110,16 +123,18 @@ this.oBaseValueaxisTime =	{
 							, "boardlinevisible"	: "true"
 							//, "tickinterval"		: ""
 						};
-						
+
+// [BarChart] 막대그래프 시리즈 기본속성
 this.oBaseSeriesBar =	{
 							  "barvisible" 			: true
 							, "barsize" 			: "75"
-							, "barlinestyle"		: "0px solid"
+							, "barlinestyle"		: "1px solid"
 							, "itemtextcolor"		: "#4c4c4c"
 							, "itemtextfont"		: "normal 10/normal '맑은 고딕'"
 							, "baritemtextgap"		: 5
 						};
 
+// [LineChart] 선그래프 시리즈 기본속성
 this.oBaseSeriesLine =	{
 							  "barvisible" 			: false
 							, "linevisible" 		: true
@@ -130,7 +145,8 @@ this.oBaseSeriesLine =	{
 							, "lineitemtextgap"		: 5
 							, "pointitemtextgap"	: 5
 						};
-						
+
+// [AreaChart] 영역그래프 시리즈 기본속성
 this.oBaseSeriesArea =	{
 							  "barvisible" 			: false
 							, "linevisible" 		: true
@@ -142,23 +158,24 @@ this.oBaseSeriesArea =	{
 							, "lineitemtextgap"		: 5
 						};
 
+// [PieChart] 원그래프 시리즈 기본속성
 this.oBaseSeriesPie =	{
-							  "radius" 					: "60"
+							  "radius" 					: "70"
 							, "opacity" 				: "0.8"
 							, "linestyle" 				: "1px solid #ffffff"
 							, "itemtextvisible" 		: true
-							, "itemtexttype" 			: "text"
 							, "itemtextguidelinestyle"	: "1px solid darkgray"
 							, "itemtextguideopacity" 	: "1"
 							, "itemtextguidesize" 		: "20"
 							, "selectindent" 			: "20"
 							, "highlightvisible"		: true
-							, "highlightradius"			: "60"
+							, "highlightradius"			: "70"
 							, "highlightopacity"		: "0.3"
 							, "highlightfillstyle"		: "#ffffff"
 							, "highlightlinestyle"		: "1px solid #ffffff"
 						};
 
+// [PyramidChart] 피라미드그래프 시리즈 기본속성
 this.oBaseSeriesPyramid =	{
  							  "margintopdown"		: 10
  							, "linestyle"			: "2px solid #ffffff"
@@ -168,23 +185,27 @@ this.oBaseSeriesPyramid =	{
  							, "autogradation"		: "none"
  							, "marginleftright"		: "30"
 						};
-						
+
+// [BubbleChart] 버블차트 시리즈 기본속성
 this.oBaseSeriesBubble =	{
 							  "itemtextfont"		: "bold 8pt '맑은 고딕'"
 						};
-									
+
+// [RadarChart] 레이더차트 시리즈 기본속성
 this.oBaseSeriesRadar =	{
 							  "linevisible"			: true
  							, "itemtextfont"		: "8pt '맑은 고딕'"
  							, "lineareaopacity"		: "0.5"
 							, "pointsize"			: "7"
 						};
-						
+
+// [RoseChart] 장미도표 시리즈 기본속성
 this.oBaseSeriesRose =	{
 							  "linevisible"			: true
  							, "itemtextfont"		: "8pt '맑은 고딕'"
 						};
 
+// [GaugeChart] 게이지차트 게이지선 기본속성
 this.oBaseIndicator =	{
 							  "id"					: "indicator"
  							, "visible"				: "true"
@@ -198,7 +219,8 @@ this.oBaseIndicator =	{
  							, "fillstyle"			: "white"
  							, "opacity"				: "1"
 						};
-						
+
+// [GaugeChart] 게이지차트 시리즈 기본속성
 this.oBaseSeriesGauge =	{
 							  "id"					: "series"
  							, "itemtextfont"		: "bold 12pt '맑은 고딕'"
@@ -209,6 +231,7 @@ this.oBaseSeriesGauge =	{
 							, "baropacity"			: "1"
 						};
 
+// [BarGaugeChart] 막대게이지차트 시리즈 기본속성
 this.oBaseSeriesBarGauge =	{
 							  "id"					: "series"
  							, "itemtextcolor"		: "#ffffff"
@@ -217,32 +240,33 @@ this.oBaseSeriesBarGauge =	{
 							, "barsize"				: "80"
 							, "baropacity"			: "1"
 						};
-						
+
+// [FloatChart] 플로트차트 시리즈 기본속성
 this.oBaseSeriesFloat =	{
  							  "id"						: "series"
 							, "barvisible" 				: true
  							, "linevisible" 			: false
  							, "barsize" 				: "50"
- 							, "itemtextcolor" 			: "#ffffff"
  							, "itemtextfont" 			: "bold 10pt '맑은 고딕'"
  							, "baropacity" 				: "0.8"
 							, "positivebarlinestyle"	: "0px solid"
 							, "negativebarlinestyle"	: "0px solid"
 					};
-					
+
+// [WaterfallChart] 폭포차트 시리즈 기본속성
 this.oBaseSeriesWaterfall =	{
  							  "id"							: "series"
 							, "barvisible" 					: true
  							, "linevisible" 				: false
  							, "barsize" 					: "50"
- 							, "itemtextcolor" 				: "#ffffff"
  							, "itemtextfont" 				: "bold 10pt '맑은 고딕'"
  							, "baropacity" 					: "0.8"
 							, "positivebarlinestyle"		: "0px solid"
 							, "negativebarlinestyle"		: "0px solid"
 							, "waterfallsumbarlinestyle"	: "0px solid"
 					};
-					
+
+// [TimeLineChart] 타임라인차트 시리즈 기본속성
 this.oBaseSeriesTimeLine =	{
  							  "id"						: "series"
 							, "barvisible" 				: true
@@ -276,32 +300,58 @@ this.lfn_GetChartColor = function(nIdx,arrColor)
 /**
  * @class 데이터 타입에 따른 Mask값 반환.
  * @param {string} sDataType - 데이터타입
- * @return {string} 데이터 타입에 따른 Mask값
+ * @return {array} 데이터 타입에 따른 Mask값
  * @example
- * var sMask = this.lfn_GetDataTypeMask("INT");	// "#,###"
+ * var sMask = this.lfn_GetDataTypeMask("INT");	// ["","number","number"]
  */
-this.lfn_GetDataTypeMask= function(sDataType)
+this.lfn_GetDataTypeMask= function(sDataType, sChartType)
 {
-	var sMask = "";
+	if (this.lfn_IsNull(sChartType))		sChartType = "";
 	
-	switch(sDataType) {
+	var sCheckDataType = this.lfn_IsNullEmpty(sDataType).toUpperCase();
+	var sMask = "";
+	var sMaskType = "normal";
+	var sDataGroup = "";
+	
+	switch(sCheckDataType) {
 		case "INT":
 		case "FLOAT":
 		case "BIGDECIMAL":
-			sMask	= "#,###";
+			sMask		= "";
+			sMaskType	= "number";
+			sDataGroup 	= "number";
 			break;
 		case "DATE":
-			sMask	= "yyyy-MM-dd";
+			if (sChartType == "timeline") {
+				sMask		= "yyyy-MM-dd";
+			} else {
+				sMask		= "@@@@-@@-@@";
+			}
+			sDataGroup 	= "date";
 			break;
 		case "TIME":
-			sMask	= "hh:mm";
+			if (sChartType == "timeline") {
+				sMask		= "hh";
+			} else {
+				sMask		= "@@:@@";
+			}
+			sDataGroup 	= "date";
 			break;
 		case "DATETIME":
-			sMask	= "yyyy-MM-dd hh:mm";
+			if (sChartType == "timeline") {
+				sMask		= "yyyy-MM-dd hh:mm";
+			} else {
+				sMask		= "@@@@-@@-@@ @@:@@";
+			}
+			sDataGroup 	= "date";
 			break;
+		case "STRING":
+			sMask		= "";
+			sMaskType	= "normal";
+			sDataGroup 	= "string";
 		default:
 	}
 	
-	return sMask;
+	return [sMask, sMaskType, sDataGroup];
 };
 ]]></Script>

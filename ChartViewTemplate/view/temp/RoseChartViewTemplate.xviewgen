@@ -268,8 +268,8 @@ fn_GetModel = function(){
 	//모델 필드 갯수 가져오기
     var nFieldCount = this.oFieldArray.fieldcount;
 	
-	// 카테고리 필드 ID
-	var sCategoryId;
+	// 카테고리 필드
+	var oCategoryField;
 	
 	var arrField = new Array(); 
 	var arrSeriesField = new Array();
@@ -287,10 +287,10 @@ fn_GetModel = function(){
 		
 		// displaytype에 따라 Array() 셋팅
 		if (sDisplaytype == "category") {
-			if (sCategoryId == undefined) {
-				sCategoryId = oField.id;
+			if(this.lfn_IsNull(oCategoryField)) {
+				oCategoryField = oField;
 			} else {
-				this.lfn_Log("category가 여러개 설정되었습니다.","warn");
+				this.lfn_Log("category가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다)","warn");
 			}
 			
 		} else if (sDisplaytype == "series") {
@@ -305,25 +305,27 @@ fn_GetModel = function(){
 	oChartAttr["enableanimation"] = this.oGenerationAttr.attributes.enableanimation;
 	
 	// 타이틀설정
-	if (sTitletext != undefined || sSubTitletext != undefined) {
-		oTitle = this.lfn_CloneObject(this.oBaseTitle);
+	oTitle = this.lfn_CloneObject(this.oBaseTitle);
+	if (this.lfn_IsNotNull(sTitletext) || this.lfn_IsNotNull(sSubTitletext)) {
 		oTitle["text"] = sTitletext;
 		oTitle["subtext"] = sSubTitletext;
 		oTitle["align"] = sTitleAlign;
+		oTitle["visible"] = true;
 	}
 				
 	// 범례 설정
-	if (sLegendPosition != "none")
+	oLegend = this.lfn_CloneObject(this.oBaseLegend);
+	if (this.lfn_IsNotNull(sLegendPosition) && sLegendPosition != "none")
 	{
-		oLegend = this.lfn_CloneObject(this.oBaseLegend);
 		oLegend["align"] = sLegendPosition;
+		oLegend["visible"] = true;
 	}
 	
 	// 카테고리 설정
-	if (sCategoryId == undefined) {
+	if(this.lfn_IsNull(oCategoryField)) {
 		this.lfn_Log("category가 설정되지 않았습니다.","warn");
 	} else {
-		oChartAttr["categorycolumn"] = "bind:" + sCategoryId;
+		oChartAttr["categorycolumn"] = "bind:" + oCategoryField.id;
 	}
 	
 	//차트 컴포넌트 추가
@@ -344,8 +346,8 @@ fn_GetModel = function(){
 								"legend" 		: oLegend,
 								"tooltip" 		: this.oBaseTooltip,
 								"board" 		: this.oBaseBoard,
-								"categoryaxis" 	: this.oBaseCategoryaxis,
-								"valueaxes" 	: fn_GetValueAxes(),
+								"categoryaxis" 	: fn_GetCategoryAxes(oCategoryField),
+								"valueaxes" 	: fn_GetValueAxes(arrSeriesField),
 								"seriesset" 	: fn_GetSeries(arrSeriesField)
 							}
                         }
@@ -358,20 +360,49 @@ fn_GetModel = function(){
     return oModel;
 };
 
+// 카테고리 축 설정
+fn_GetCategoryAxes = function(oCategoryField)
+{
+	var arrMaskInfo = new Array();
+	
+	var oCategoryAxes;
+	
+	// 카테고리축 추가
+	oCategoryAxes = {};
+	oCategoryAxes = this.lfn_CloneObject(this.oBaseCategoryaxis);
+	
+	if(this.lfn_IsNotNull(oCategoryField)) {
+		arrMaskInfo = this.lfn_GetDataTypeMask(oCategoryField.datatype);
+		oCategoryAxes["labelmask"] = arrMaskInfo[0];
+		oCategoryAxes["labeltype"] = arrMaskInfo[1];
+	}
+	
+	return oCategoryAxes;
+};
+
 // 데이터 축 설정
-fn_GetValueAxes = function()
+fn_GetValueAxes = function(arrAxisYField)
 {
 	var arrValueAxes = new Array();
 	var oValueAxes;
 	
+	var arrMaskInfo = new Array();
 	var oField;
-	
-	// TODO : 축관련 설정이 들어가면 수정필요.
 	
 	// 기본y축 추가
 	oValueAxes = {};
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
+	
+	if (arrAxisYField.length == 0) {
+		this.lfn_Log("series가 설정되지 않았습니다.","warn");
+	} else {
+		oFieldy = arrAxisYField[0];				// 첫번째 시리즈 기준으로 축값 설정
+		arrMaskInfo = this.lfn_GetDataTypeMask(oFieldy.datatype);
+		oValueAxes["labelmask"] = arrMaskInfo[0];
+		oValueAxes["labeltype"] = arrMaskInfo[1];
+	}
+	
 	arrValueAxes.push(oValueAxes);
 
     return arrValueAxes;
@@ -387,6 +418,8 @@ fn_GetSeries = function(arrSeriesField)
 	var oSeries;
 	
 	var oField;
+	
+	var arrMaskInfo = new Array();
 	
 	var nCount = arrSeriesField.length;
 	
@@ -412,8 +445,11 @@ fn_GetSeries = function(arrSeriesField)
 		if (sItemTextPosition == "none") {
 			oSeries["itemtextvisible"] = false;
 		} else {
-			oSeries["itemtextvisible"] = true;
-			//oSeries["itemtexttype"] = oField.datatype;
+			arrMaskInfo = this.lfn_GetDataTypeMask(oField.datatype);
+			
+			oSeries["itemtextvisible"] 		= true;
+			oSeries["itemtextmask"]			= arrMaskInfo[0];
+			oSeries["itemtexttype"]			= arrMaskInfo[1];
 			
 			oSeries["lineitemtextposition"] = sItemTextPosition;
 		}

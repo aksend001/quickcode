@@ -302,11 +302,8 @@ fn_GetModel = function(){
 	//모델 필드 갯수 가져오기
     var nFieldCount = this.oFieldArray.fieldcount;
 	
-	// 카테고리 필드 ID
-	var sCategoryId;
-	
-	// 시리즈 필드 ID
-	var SeriesField;
+	// 카테고리 필드
+	var oCategoryField;
 	
 	// 선택 필드 ID
 	var sSelectId;
@@ -327,21 +324,19 @@ fn_GetModel = function(){
 		
 		// displaytype에 따라 Array() 셋팅
 		if (sDisplaytype == "category") {
-			if (sCategoryId == undefined) {
-				sCategoryId = oField.id;
+			if(this.lfn_IsNull(oCategoryField)) {
+				oCategoryField = oField;
 			} else {
-				this.lfn_Log("category가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다.)","warn");
+				this.lfn_Log("category가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다)","warn");
 			}
-			
 		} else if (sDisplaytype == "series") {
-			if (SeriesField == undefined) {
-				SeriesField = oField.id;
+			if (arrSeriesField.length == 0) {
 				arrSeriesField.push(oField);
 			} else {
 				this.lfn_Log("series가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다.)","warn");
 			}
 		} else if (sDisplaytype == "select") {
-			if (sSelectId == undefined) {
+			if (this.lfn_IsNull(sSelectId)) {
 				sSelectId = oField.id;
 			} else {
 				this.lfn_Log("select가 여러개 설정되었습니다.(1개의 필드만 설정가능합니다.)","warn");
@@ -363,29 +358,31 @@ fn_GetModel = function(){
 	oChartAttr["enableanimation"] = this.oGenerationAttr.attributes.enableanimation;
 	
 	// 타이틀설정
-	if (sTitletext != undefined || sSubTitletext != undefined) {
-		oTitle = this.lfn_CloneObject(this.oBaseTitle);
+	oTitle = this.lfn_CloneObject(this.oBaseTitle);
+	if (this.lfn_IsNotNull(sTitletext) || this.lfn_IsNotNull(sSubTitletext)) {
 		oTitle["text"] = sTitletext;
 		oTitle["subtext"] = sSubTitletext;
 		oTitle["align"] = sTitleAlign;
+		oTitle["visible"] = true;
 	}
 				
 	// 범례 설정
-	if (sLegendPosition != "none")
+	oLegend = this.lfn_CloneObject(this.oBaseLegend);
+	if (this.lfn_IsNotNull(sLegendPosition) && sLegendPosition != "none")
 	{
-		oLegend = this.lfn_CloneObject(this.oBaseLegend);
 		oLegend["align"] = sLegendPosition;
+		oLegend["visible"] = true;
 	}
 	
 	// 카테고리 설정
-	if (sCategoryId == undefined) {
+	if(this.lfn_IsNull(oCategoryField)) {
 		this.lfn_Log("category가 설정되지 않았습니다.","warn");
 	} else {
-		oChartAttr["categorycolumn"] = "bind:" + sCategoryId;
+		oChartAttr["categorycolumn"] = "bind:" + oCategoryField.id;
 	}
 	
 	// 선택 필드 설정
-	if (sSelectId != undefined) {
+	if (this.lfn_IsNotNull(sSelectId)) {
 		this.oBaseSeriesPie["selectcolumn"] = "bind:" + sSelectId;
 		this.oBaseSeriesPie["selecttype"] = "bind";
 	}
@@ -430,12 +427,15 @@ fn_GetSeries = function(arrSeriesField)
 	
 	var oField;
 	
+	var arrMaskInfo = new Array();
+	
 	var nCount = arrSeriesField.length;
 	
 	// arrSeriesField 갯수 기준으로 series 태그 생성
 	for(var i=0;i<nCount;i++)
 	{
 		oField = arrSeriesField[i];
+		arrMaskInfo = this.lfn_GetDataTypeMask(oField.datatype);
 		
 		oSeries = {};
 		oSeries = this.lfn_CloneObject(this.oBaseSeriesPie);
@@ -456,6 +456,10 @@ fn_GetSeries = function(arrSeriesField)
 			oSeries["fillstyle"] = this.lfn_GetChartColor(i);
 		}
 		
+		// 데이터 출력설정
+		oSeries["itemtextmask"]			= arrMaskInfo[0];
+		oSeries["itemtexttype"]			= arrMaskInfo[1];
+			
 		arrSeries.push(oSeries);
 	}
 	

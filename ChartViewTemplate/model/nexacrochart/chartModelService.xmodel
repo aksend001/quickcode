@@ -37,9 +37,9 @@
     </Model>
     <Model id="radarmodel" name="radarmodel" iotype="output" description="RadarChart용 model">
       <Field required="false" id="catName" label="category" fieldtype="FreeText" datatype="STRING" datasize="80"/>
-      <Field required="false" id="year2020" label="2020" fieldtype="FreeText" datatype="STRING" datasize="80"/>
-      <Field required="false" id="year2021" label="2021" fieldtype="FreeText" datatype="STRING" datasize="80"/>
-      <Field required="false" id="year2022" label="2022" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="year2020" label="2020" fieldtype="FreeText" datatype="INT" datasize="80"/>
+      <Field required="false" id="year2021" label="2021" fieldtype="FreeText" datatype="INT" datasize="80"/>
+      <Field required="false" id="year2022" label="2022" fieldtype="FreeText" datatype="INT" datasize="80"/>
     </Model>
     <Model id="gaugemodel" name="gaugemodel" iotype="output" description="GaugeChart용 model">
       <Field required="false" id="ID_1" label="male" fieldtype="FreeText" datatype="STRING" datasize="80"/>
@@ -48,6 +48,29 @@
       <Field required="false" id="VALUE_2" label="female value" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
       <Field required="false" id="ID_TOT" label="totoal" fieldtype="FreeText" datatype="STRING" datasize="80"/>
       <Field required="false" id="VALUE_TOT" label="totoal value" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
+    </Model>
+    <Model id="floatmodel" name="floatmodel" iotype="output" description="FloatChart 용 model">
+      <Field required="false" id="CAREER" label="경력" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="BOTTOM_25" label="하위25%" fieldtype="FreeText" datatype="INT" datasize="80"/>
+      <Field required="false" id="TOP_25" label="상위25%" fieldtype="FreeText" datatype="INT" datasize="80"/>
+      <Field required="false" id="AVERAGE" label="평균" fieldtype="FreeText" datatype="BIGDECIMAL" datasize="80"/>
+    </Model>
+    <Model id="waterfallmodel" name="waterfallmodel" iotype="output" description="WaterfallChart 용 model">
+      <Field required="false" id="DAY" label="요일" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="FLUCTUATION" label="증감값" fieldtype="FreeText" datatype="FLOAT" datasize="80"/>
+    </Model>
+    <Model id="timelinemodel" name="timelinemodel" iotype="output" description="TimeLineChart 용 model">
+      <Field required="false" id="ROOM_NM" label="회의실명" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="FROM" label="시작시간" fieldtype="FreeText" datatype="DATE" datasize="80"/>
+      <Field required="false" id="TO" label="종료시간" fieldtype="FreeText" datatype="DATE" datasize="80"/>
+      <Field required="false" id="DEPT_NM" label="부서명" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="PERCENT" label="실행율" fieldtype="FreeText" datatype="FLOAT" datasize="80"/>
+    </Model>
+    <Model id="combinationmodel" name="combinationmodel" iotype="output" description="CombinationChart 용 Model">
+      <Field required="false" id="month" label="Month" fieldtype="FreeText" datatype="STRING" datasize="80"/>
+      <Field required="false" id="rainfall" label="Rainfall" fieldtype="FreeText" datatype="FLOAT" datasize="80"/>
+      <Field required="false" id="temperature" label="Temperature" fieldtype="FreeText" datatype="FLOAT" datasize="80"/>
+      <Field required="false" id="pressure" label="Sea-Level Pressure" fieldtype="FreeText" datatype="FLOAT" datasize="80"/>
     </Model>
   </Models>
   <Service id="" name="" url=""/>
