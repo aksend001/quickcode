@@ -4,6 +4,7 @@
     <Group name="view_lib">
       <Group name="chart">
         <Snippet name="lfn_GetChartColor" shortcut="lfn_GetChartColor" description="색상배열에서 Index에 해당하는 Chart 색상을 반환&#13;&#10;&#13;&#10;lfn_GetChartColor(nIdx,arrColor)&#13;&#10;&#13;&#10;Parameters:&#13;&#10;{number} nIdx&#13;&#10; - 색상 Index&#13;&#10;{array} arrColor&#13;&#10; - 16진 색상코드 배열&#13;&#10;&#13;&#10;Returns:&#13;&#10;{string} 16진 색상코드&#13;&#10;&#13;&#10;ex)&#13;&#10;var sColor = this.lfn_GetChartColor(0);&#9;// &quot;#1f77b4&quot;&#13;&#10; var sColor2 = this.lfn_GetChartColor(0,this.arrColorTableau10);&#9;// &quot;#4e79a7&quot;">this.lfn_GetChartColor(nIdx,arrColor)</Snippet>
+        <Snippet name="lfn_GetDataTypeMask" shortcut="lfn_GetDataTypeMask" description="데이터 타입에 따른 Mask값 반환&#13;&#10;&#13;&#10;lfn_GetDataTypeMask(sDataType)&#13;&#10;&#13;&#10;Parameters:&#13;&#10;{string} sDataType&#13;&#10;- 데이터타입&#13;&#10;&#13;&#10;Returns:&#13;&#10;{string} 데이터 타입에 따른 Mask값&#13;&#10;&#13;&#10;ex)&#13;&#10;var sMask = this.lfn_GetDataTypeMask(&quot;INT&quot;);&#9;// &quot;#,###&quot;">this.lfn_GetDataTypeMask(sDataType)</Snippet>
       </Group>
       <Group name="common">
         <Snippet name="lfn_GetCompId" shortcut="lfn_GetCompId" description="컴포넌트 ID 생성 함수&#13;&#10;&#13;&#10;lfn_GetCompId(sCompId)&#13;&#10;&#13;&#10;Parameters:&#13;&#10;{string} sCompId - 생성할 컴포넌트 아이디&#13;&#10;&#13;&#10;Returns:&#13;&#10;{String} 컴포넌트 ID"></Snippet>

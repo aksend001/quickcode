@@ -22,6 +22,7 @@ include "view_lib::chart.xjs";
 /************************************************************************************************
  * 변수 선언 영역
  ************************************************************************************************/
+this.SERIES_LINE_STYLE = "1px solid";				// 시리즈 선 스타일			
 /************************************************************************************************
  * Nexacro Studio 호출 필수 FUNCTION 영역
  ************************************************************************************************/
@@ -425,6 +426,12 @@ fn_GetSeries = function(arrSeriesField)
 		oSeries["id"] = this.lfn_GetCompId("series" + " " + oField.id);
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
+		
+		// [RadaChart] 시리즈 색상처리
+		oSeries["linestyle"] = this.SERIES_LINE_STYLE + " " + this.lfn_GetChartColor(i);
+		oSeries["pointlinestyle"] = this.SERIES_LINE_STYLE + " " + this.lfn_GetChartColor(i);
+		oSeries["lineareafillstyle"] = this.lfn_GetChartColor(i);
+		oSeries["pointfillstyle"] = this.lfn_GetChartColor(i);
 		
 		// [RadaChart] 시리즈의 표시 유형을 설정
 		if (sSeriesType == "linepoint")	{				// 선+점 표시

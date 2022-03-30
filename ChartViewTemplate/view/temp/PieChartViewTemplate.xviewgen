@@ -449,14 +449,12 @@ fn_GetSeries = function(arrSeriesField)
 			oSeries["endangle"] = "180";
 		}
 		
-		// 데이터 출력설정
-// 		if (sItemTextPosition == "none") {
-// 			oSeries["itemtextvisible"] = false;
-// 		} else {
-// 			oSeries["itemtextvisible"] = true;
-// 			//oSeries["itemtexttype"] = oField.datatype;
-// 			oSeries["baritemtextposition"] = sItemTextPosition;
-// 		}
+		// [PieChart] 시리즈 색상처리
+		if (nCount == 1)	{				// 시리즈 1개
+			oSeries["fillstyle"] = this.arrBaseChartColor.toString();
+		} else {
+			oSeries["fillstyle"] = this.lfn_GetChartColor(i);
+		}
 		
 		arrSeries.push(oSeries);
 	}

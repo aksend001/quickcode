@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Script version="1.0" type="xscript5.1"><![CDATA[
 this.ENUM_INPUT = "input";
+
 //----------------------------- 차트 디자인관련 상수 설정부 START ---------------------------------
 // 차트색상 - Category10
-this.arrBaseChartColor = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
+this.arrBaseChartColor = ["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"];
 
 // 컬러 Array [참고] https://observablehq.com/@d3/color-schemes#Category10 
 this.arrColorCategory10	= ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2","#7f7f7f","#bcbd22","#17becf"];
@@ -66,6 +67,7 @@ this.oBaseCategoryaxis =	{
 							, "ticksize"			: "5"
 							, "labelgap"			: "5"
 						};
+						
 this.oBaseValueaxis =	{
 							  "id" 					: "valueaxis"
 							, "boardlinevisible"	: true
@@ -81,9 +83,38 @@ this.oBaseValueaxis =	{
 							, "autotickscale"		: "10"
 						};
 						
+this.oBaseValueaxis2 =	{
+							  "id" 					: "valueaxisy2"
+							, "boardlinevisible"	: false							// 라인표시안함.
+							, "opposite"			: true							// 오른쪽 표시
+							, "boardlinestyle" 		: "1px solid #d0d0d0"
+							, "labeltextcolor" 		: "#6f6f6f"
+							, "labeltextfont" 		: "9pt/normal '맑은 고딕'"
+							, "titletextcolor" 		: "#4c4c4c"
+							, "titletextfont" 		: "bold 12pt '맑은 고딕'"
+							, "ticklinestyle" 		: "1px solid #525252"
+							, "axislinestyle" 		: "1px solid #525252"
+							, "labelgap" 			: "5"
+							, "ticksize" 			: "5"
+							, "autotickscale"		: "10"
+						};
+
+this.oBaseValueaxisTime =	{
+							  "id"					: "valueaxistime"
+							, "labeltextcolor"		: "#6f6f6f"
+							, "labeltextfont"		: "10pt '맑은 고딕'"
+							, "axislinestyle"		: "1px solid #d0d0d0"
+							, "boardlinestyle"		: "1px solid #d0d0d0"
+							, "opposite"			: "true"
+							, "labeltype"			: "normal"
+							, "boardlinevisible"	: "true"
+							//, "tickinterval"		: ""
+						};
+						
 this.oBaseSeriesBar =	{
 							  "barvisible" 			: true
 							, "barsize" 			: "75"
+							, "barlinestyle"		: "0px solid"
 							, "itemtextcolor"		: "#4c4c4c"
 							, "itemtextfont"		: "normal 10/normal '맑은 고딕'"
 							, "baritemtextgap"		: 5
@@ -93,6 +124,7 @@ this.oBaseSeriesLine =	{
 							  "barvisible" 			: false
 							, "linevisible" 		: true
 							, "pointsize"			: "7"
+							, "pointlinestyle"		: "0px solid"
 							, "itemtextcolor"		: "#4c4c4c"
 							, "itemtextfont"		: "normal 10/normal '맑은 고딕'"
 							, "lineitemtextgap"		: 5
@@ -103,6 +135,7 @@ this.oBaseSeriesArea =	{
 							  "barvisible" 			: false
 							, "linevisible" 		: true
 							, "lineareavisible"		: true
+							, "pointlinestyle"		: "0px solid"
 							, "lineareaopacity"		: "0.5"
 							, "itemtextcolor"		: "#4c4c4c"
 							, "itemtextfont"		: "normal 10/normal '맑은 고딕'"
@@ -113,7 +146,6 @@ this.oBaseSeriesPie =	{
 							  "radius" 					: "60"
 							, "opacity" 				: "0.8"
 							, "linestyle" 				: "1px solid #ffffff"
-							, "fillstyle" 				: this.arrBaseChartColor.toString()
 							, "itemtextvisible" 		: true
 							, "itemtexttype" 			: "text"
 							, "itemtextguidelinestyle"	: "1px solid darkgray"
@@ -130,7 +162,6 @@ this.oBaseSeriesPie =	{
 this.oBaseSeriesPyramid =	{
  							  "margintopdown"		: 10
  							, "linestyle"			: "2px solid #ffffff"
-							, "fillstyle" 			: this.arrBaseChartColor.toString()
  							, "itemtextfont"		: "10pt/normal '맑은 고딕'"
  							, "graphhalign"			: "center"
  							, "itemtextguidesize"	: "30"
@@ -188,15 +219,41 @@ this.oBaseSeriesBarGauge =	{
 						};
 						
 this.oBaseSeriesFloat =	{
- 							  "id"					: "series"
-							, "barvisible" 			: true
- 							, "linevisible" 		: true
- 							, "barsize" 			: "50"
- 							, "itemtextcolor" 		: "#ffffff"
- 							, "itemtextfont" 		: "bold 10pt '맑은 고딕'"
- 							, "baropacity" 			: "0.8"
-							, "highlightbarvisible"	: "true"
-					}
+ 							  "id"						: "series"
+							, "barvisible" 				: true
+ 							, "linevisible" 			: false
+ 							, "barsize" 				: "50"
+ 							, "itemtextcolor" 			: "#ffffff"
+ 							, "itemtextfont" 			: "bold 10pt '맑은 고딕'"
+ 							, "baropacity" 				: "0.8"
+							, "positivebarlinestyle"	: "0px solid"
+							, "negativebarlinestyle"	: "0px solid"
+					};
+					
+this.oBaseSeriesWaterfall =	{
+ 							  "id"							: "series"
+							, "barvisible" 					: true
+ 							, "linevisible" 				: false
+ 							, "barsize" 					: "50"
+ 							, "itemtextcolor" 				: "#ffffff"
+ 							, "itemtextfont" 				: "bold 10pt '맑은 고딕'"
+ 							, "baropacity" 					: "0.8"
+							, "positivebarlinestyle"		: "0px solid"
+							, "negativebarlinestyle"		: "0px solid"
+							, "waterfallsumbarlinestyle"	: "0px solid"
+					};
+					
+this.oBaseSeriesTimeLine =	{
+ 							  "id"						: "series"
+							, "barvisible" 				: true
+ 							, "linevisible" 			: false
+ 							, "barsize" 				: "50"
+ 							, "itemtextcolor" 			: "#ffffff"
+ 							, "itemtextfont" 			: "bold 10pt '맑은 고딕'"
+ 							, "baropacity" 				: "0.8"
+							, "positivebarlinestyle"	: "0px solid"
+							, "negativebarlinestyle"	: "1px solid #ffffff"				// %색상과 구분을 위해 line값 설정
+					};
 //----------------------------- 차트 디자인관련 상수 설정부 END -----------------------------------
 
 /**
@@ -214,5 +271,37 @@ this.lfn_GetChartColor = function(nIdx,arrColor)
 	
 	var nArrIdx = nIdx % arrColor.length;
 	return arrColor[nArrIdx];
+};
+
+/**
+ * @class 데이터 타입에 따른 Mask값 반환.
+ * @param {string} sDataType - 데이터타입
+ * @return {string} 데이터 타입에 따른 Mask값
+ * @example
+ * var sMask = this.lfn_GetDataTypeMask("INT");	// "#,###"
+ */
+this.lfn_GetDataTypeMask= function(sDataType)
+{
+	var sMask = "";
+	
+	switch(sDataType) {
+		case "INT":
+		case "FLOAT":
+		case "BIGDECIMAL":
+			sMask	= "#,###";
+			break;
+		case "DATE":
+			sMask	= "yyyy-MM-dd";
+			break;
+		case "TIME":
+			sMask	= "hh:mm";
+			break;
+		case "DATETIME":
+			sMask	= "yyyy-MM-dd hh:mm";
+			break;
+		default:
+	}
+	
+	return sMask;
 };
 ]]></Script>

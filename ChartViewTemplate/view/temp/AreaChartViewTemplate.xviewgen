@@ -5,12 +5,12 @@
 *  [Chart] AreaChart View Template
 *  @FileName 	AreaChartViewTemplate.xviewgen 
 *  @Creator 	Creator
-*  @CreateDate 	2022.03.15
+*  @CreateDate 	2022.03.16
 *  @Desction    영역형 그래프(Area Chart)를 그려주는 템플릿
 ************** 소스 수정 이력 ***********************************************
 *  date          		Modifier                Description
 *******************************************************************************
-*  2022.03.15     		Creator       	      		최초 생성
+*  2022.03.16     		Creator       	      		최초 생성
 *******************************************************************************
 */
 /************************************************************************************************
@@ -22,6 +22,7 @@ include "view_lib::chart.xjs";
 /************************************************************************************************
  * 변수 선언 영역
  ************************************************************************************************/
+this.SERIES_LINE_STYLE = "1px solid";				// 시리즈 선 스타일
 /************************************************************************************************
  * Nexacro Studio 호출 필수 FUNCTION 영역
  ************************************************************************************************/
@@ -196,6 +197,12 @@ fn_GetViewAttributeList = function() {
                                 "defaultvalue": "rightcenter",
                                 "enumlist" : ["none", "topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
                                 "description": "범례 표시 위치"
+                            }
+							, {									
+                                "id": "valueaxistitletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "데이터축 타이틀 Text(여러 축 설정시 ,를 구분자로 여러개 입력)"									
                             }
 							, {
                                 "id": "itemtextposition",		// [AreaChart]
@@ -419,6 +426,9 @@ fn_GetModel = function(){
 // 데이터 축 설정
 fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 {
+	var sAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.valueaxistitletext);
+	var arrAxisTitleText = sAxisTitleText.split(",");
+	
 	var arrValueAxes = new Array();
 	var oValueAxes;
 	
@@ -430,15 +440,15 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	oValueAxes = {};
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
+	oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[0]);
 	arrValueAxes.push(oValueAxes);
 	
 	// Y1추가
 	if (arrAxisY1Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis2);
 		oValueAxes["id"] = "valueaxis" + "y1";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		delete oValueAxes["boardlinevisible"];			// 라인제거
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[1]);
 		
 		arrValueAxes.push(oValueAxes);
 	}
@@ -446,10 +456,9 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	// Y2추가
 	if (arrAxisY2Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis2);
 		oValueAxes["id"] = "valueaxis" + "y2";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		delete oValueAxes["boardlinevisible"];			// 라인제거
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[2]);
 		
 		arrValueAxes.push(oValueAxes);
 	}
@@ -484,6 +493,11 @@ fn_GetSeries = function(arrSeriesField)
 		
 		// 선유형설정
 		oSeries["linetype"] = sLineType;
+		
+		// [AreaChart] 시리즈 색상처리
+		oSeries["linestyle"] = this.SERIES_LINE_STYLE + " " + this.lfn_GetChartColor(i);
+		oSeries["lineareafillstyle"] = this.lfn_GetChartColor(i);
+		oSeries["pointfillstyle"] = this.lfn_GetChartColor(i);
 		
 		// 데이터 출력설정
 		if (sItemTextPosition == "none") {

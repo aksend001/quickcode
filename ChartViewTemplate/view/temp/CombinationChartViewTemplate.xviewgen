@@ -23,6 +23,7 @@ include "view_lib::chart.xjs";
 /************************************************************************************************
  * 변수 선언 영역
  ************************************************************************************************/
+this.SERIES_LINE_STYLE = "1px solid";				// 시리즈 선 스타일
 /************************************************************************************************
  * Nexacro Studio 호출 필수 FUNCTION 영역
  ************************************************************************************************/
@@ -178,6 +179,26 @@ fn_GetViewAttributeList = function() {
                                 "enumlist" : ["none", "topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
                                 "description": "범례 표시 위치"
                             }
+							, {									
+                                "id": "valueaxistitletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "데이터축 타이틀 Text(여러 축 설정시 ,를 구분자로 여러개 입력)"									
+                            }
+							, {
+                                "id": "baritemtextposition",			// [CombinationChart]
+                                "edittype": "Enum",
+                                "defaultvalue": "none",
+                                "enumlist" : ["none", "start", "middle", "end", "outside"],
+                                "description": "seriesdisplay이 'bar'일때 값 표시 위치"
+                            }
+							, {
+                                "id": "lineareaitemtextposition",		// [CombinationChart]
+                                "edittype": "Enum",
+                                "defaultvalue": "none",
+                                "enumlist" : ["none", "lefttop", "centertop", "righttop", "leftmiddle", "centermiddle", "rightmiddle", "leftbottom", "centerbottom", "rightbottom"],
+                                "description": "seriesdisplay이 'line', 'linepoint','area'일때 값 표시 위치"
+                            }
                         ]
                   };
 				  
@@ -252,20 +273,6 @@ fn_GetFieldUserAttributeList = function ()
 								"enumlist" 		: ["y", "y1", "y2"],
 								"defaultvalue"	: "y",
                                 "description"	: "데이터축을 설정. y는 왼쪽, y1,y2는 오른쪽에 표시됨."
-                            }
-							, {
-                                "id": "baritemtextposition",			// [CombinationChart]
-                                "edittype": "Enum",
-                                "defaultvalue": "none",
-                                "enumlist" : ["none", "start", "middle", "end", "outside"],
-                                "description": "seriesdisplay이 'bar'일때 값 표시 위치"
-                            }
-							, {
-                                "id": "lineareaitemtextposition",		// [CombinationChart]
-                                "edittype": "Enum",
-                                "defaultvalue": "none",
-                                "enumlist" : ["none", "lefttop", "centertop", "righttop", "leftmiddle", "centermiddle", "rightmiddle", "leftbottom", "centerbottom", "rightbottom"],
-                                "description": "seriesdisplay이 'line', 'linepoint','area'일때 값 표시 위치"
                             }
                         ]
                   };
@@ -417,6 +424,9 @@ fn_GetModel = function(){
 // 데이터 축 설정
 fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 {
+	var sAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.valueaxistitletext);
+	var arrAxisTitleText = sAxisTitleText.split(",");
+	
 	var arrValueAxes = new Array();
 	var oValueAxes;
 	
@@ -428,15 +438,15 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	oValueAxes = {};
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
+	oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[0]);
 	arrValueAxes.push(oValueAxes);
 	
 	// Y1추가
 	if (arrAxisY1Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis2);
 		oValueAxes["id"] = "valueaxis" + "y1";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		delete oValueAxes["boardlinevisible"];			// 라인제거
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[1]);
 		
 		arrValueAxes.push(oValueAxes);
 	}
@@ -444,10 +454,9 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	// Y2추가
 	if (arrAxisY2Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis2);
 		oValueAxes["id"] = "valueaxis" + "y2";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		delete oValueAxes["boardlinevisible"];			// 라인제거
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[2]);
 		
 		arrValueAxes.push(oValueAxes);
 	}
@@ -458,8 +467,8 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 // 시리즈 셋팅
 fn_GetSeries = function(arrSeriesField)
 {
-	var sItemTextPosition = this.oGenerationAttr.attributes.itemtextposition;
-	var sChartDisplay = this.oGenerationAttr.attributes.chartdisplay;
+	var sBarItemTextPosition = this.oGenerationAttr.attributes.baritemtextposition;
+	var sLineAreaItemTextPosition = this.oGenerationAttr.attributes.lineareaitemtextposition;
 	
 	var arrSeries = new Array();
 	var oSeries;
@@ -491,7 +500,7 @@ fn_GetSeries = function(arrSeriesField)
 			
 			// 데이터 출력설정
 			sItemTextPositionNm = "lineitemtextposition";
-			sItemTextPosition 	= oField.lineareaitemtextposition;
+			sItemTextPosition 	= sLineAreaItemTextPosition;
 			
 		} else if (sSeriesDisplay == "linepoint") {						// seriesdisplay = "linepoint"
 			oSeries = this.lfn_CloneObject(this.oBaseSeriesLine);
@@ -504,7 +513,7 @@ fn_GetSeries = function(arrSeriesField)
 			
 			// 데이터 출력설정
 			sItemTextPositionNm = "pointitemtextposition";
-			sItemTextPosition 	= oField.lineareaitemtextposition;
+			sItemTextPosition 	= sLineAreaItemTextPosition;
 			
 		} else if (sSeriesDisplay == "area") {								// AreaChart
 			oSeries = this.lfn_CloneObject(this.oBaseSeriesArea);
@@ -514,7 +523,7 @@ fn_GetSeries = function(arrSeriesField)
 			
 			// 데이터 출력설정
 			sItemTextPositionNm = "lineitemtextposition";
-			sItemTextPosition 	= oField.lineareaitemtextposition;
+			sItemTextPosition 	= sLineAreaItemTextPosition;
 			
 		} else {															// BarChart
 			oSeries = this.lfn_CloneObject(this.oBaseSeriesBar);
@@ -524,7 +533,7 @@ fn_GetSeries = function(arrSeriesField)
 			
 			// 데이터 출력설정
 			sItemTextPositionNm = "baritemtextposition";
-			sItemTextPosition 	= oField.baritemtextposition;
+			sItemTextPosition 	= sBarItemTextPosition;
 		}
 		
 		oSeries["id"] = this.lfn_GetCompId("series" + " " + oField.id);
@@ -535,6 +544,12 @@ fn_GetSeries = function(arrSeriesField)
 		if (this.lfn_IsNotNull(sLineType)) {
 			oSeries["linetype"] = sLineType;
 		}
+		
+		// [CombinationChart] 시리즈 색상처리
+		oSeries["barfillstyle"]			= this.lfn_GetChartColor(i);
+		oSeries["linestyle"]			= this.SERIES_LINE_STYLE + " " + this.lfn_GetChartColor(i);
+		oSeries["lineareafillstyle"]	= this.lfn_GetChartColor(i);
+		oSeries["pointfillstyle"]		= this.lfn_GetChartColor(i);
 		
 		// 데이터 출력설정
 		if (sItemTextPosition == "none") {

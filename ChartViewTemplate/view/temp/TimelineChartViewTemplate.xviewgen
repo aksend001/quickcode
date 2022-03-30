@@ -398,7 +398,7 @@ fn_GetValueAxes = function()
 	
 	// 기본y축 추가
 	oValueAxes = {};
-	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxisTime);
 	oValueAxes["id"] = "valueaxis" + "y";
 //	oValueAxes["tickinterval"] = "1";
 //	oValueAxes["timelabelunitmask"] = sMask;
@@ -435,7 +435,7 @@ fn_GetSeries = function(arrSeriesField)
 	}
 	
 	oSeries = {};
-	oSeries = this.lfn_CloneObject(this.oBaseSeriesFloat);
+	oSeries = this.lfn_CloneObject(this.oBaseSeriesTimeLine);
 	oSeries["id"] = this.lfn_GetCompId("series");
 	oSeries["valuecolumn"] = "bind:" + oFieldSeriesTo.id;
 	
@@ -446,6 +446,10 @@ fn_GetSeries = function(arrSeriesField)
 	if (oFieldSeriesPercent != undefined) {
 		oSeries["value3column"] = "bind:" + oFieldSeriesPercent.id;
 	}
+	
+	// [TimeLineChart] 시리즈 색상처리
+	oSeries["positivebarfillstyle"] = this.arrBaseChartColor.join(",");		// 막대색상, 양수
+	oSeries["negativebarfillstyle"] = this.arrBaseChartColor.join(",");		// %막대색상, 음수
 	
 	// 데이터 출력설정
 	if (sItemTextPosition == "none") {

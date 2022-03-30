@@ -409,6 +409,10 @@ fn_GetSeries = function(arrSeriesField)
 		oSeries["value2column"] = "bind:" + oFieldSeriesFrom.id;
 	}
 	
+	// [FloatChart] 시리즈 색상처리
+	oSeries["positivebarfillstyle"] = this.arrBaseChartColor.join(",");		// 양수
+	oSeries["negativebarfillstyle"] = this.arrBaseChartColor.join(",");		// 음수
+	
 	// 데이터 출력설정
 	if (sItemTextPosition == "none") {
 		oSeries["itemtextvisible"] = false;

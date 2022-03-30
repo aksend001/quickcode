@@ -22,6 +22,9 @@ include "view_lib::chart.xjs";
 /************************************************************************************************
  * 변수 선언 영역
  ************************************************************************************************/
+this.POSITIVE_BAR_FILLSTYLE		= this.arrBaseChartColor[0];		// 양수 막대
+this.NEGATIVE_BAR_FILLSTYLE		= this.arrBaseChartColor[1];		// 음수 막대
+this.WATERFALL_SUMBAR_FILLSTYLE	= this.arrBaseChartColor[2];		// 증감합계 막대
 /************************************************************************************************
  * Nexacro Studio 호출 필수 FUNCTION 영역
  ************************************************************************************************/
@@ -402,7 +405,7 @@ fn_GetSeries = function(arrSeriesField)
 	}
 	
 	oSeries = {};
-	oSeries = this.lfn_CloneObject(this.oBaseSeriesFloat);
+	oSeries = this.lfn_CloneObject(this.oBaseSeriesWaterfall);
 	oSeries["id"] = this.lfn_GetCompId("series");
 	oSeries["valuecolumn"] = "bind:" + oFieldSeriesTo.id;
 	
@@ -410,14 +413,16 @@ fn_GetSeries = function(arrSeriesField)
 		oSeries["value2column"] = "bind:" + oFieldSeriesFrom.id;
 	}
 	
+	// [FloatChart] 시리즈 색상처리
+	oSeries["positivebarfillstyle"] 	= this.POSITIVE_BAR_FILLSTYLE;		// 양수 막대
+	oSeries["negativebarfillstyle"] 	= this.NEGATIVE_BAR_FILLSTYLE;		// 음수 막대
+	oSeries["waterfallsumbarfillstyle"] = this.WATERFALL_SUMBAR_FILLSTYLE;	// 증감합계 막대
+	
 	// 데이터 출력설정
 	if (sItemTextPosition == "none") {
 		oSeries["itemtextvisible"] = false;
 	} else {
 		oSeries["itemtextvisible"] = true;
-		//oSeries["itemtexttype"] = oField.datatype;
-		
-		// [BarChart]
 		oSeries["itemtextposition"] = sItemTextPosition;
 	}
 	

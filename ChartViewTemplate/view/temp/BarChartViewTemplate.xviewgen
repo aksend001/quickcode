@@ -199,6 +199,12 @@ fn_GetViewAttributeList = function() {
                                 "enumlist" : ["none", "topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
                                 "description": "범례 표시 위치"
                             }
+							, {									
+                                "id": "valueaxistitletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "데이터축 타이틀 Text(여러 축 설정시 ,를 구분자로 여러개 입력)"									
+                            }
 							, {
                                 "id": "itemtextposition",		// [BarChart]
                                 "edittype": "Enum",
@@ -428,6 +434,9 @@ fn_GetModel = function(){
 // 데이터 축 설정
 fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 {
+	var sAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.valueaxistitletext);
+	var arrAxisTitleText = sAxisTitleText.split(",");
+	
 	var arrValueAxes = new Array();
 	var oValueAxes;
 	
@@ -439,15 +448,18 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	oValueAxes = {};
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
+	oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[0]);
 	arrValueAxes.push(oValueAxes);
 	
 	// Y1추가
 	if (arrAxisY1Field.length > 0) {
+		//oField = arrAxisY1Field[0];			// 첫번째 시리즈 기준으로 축값 설정
+		
 		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis2);
 		oValueAxes["id"] = "valueaxis" + "y1";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		delete oValueAxes["boardlinevisible"];			// 라인제거
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[1]);
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[1]);
 		
 		arrValueAxes.push(oValueAxes);
 	}
@@ -455,10 +467,9 @@ fn_GetValueAxes = function(arrAxisY1Field, arrAxisY2Field)
 	// Y2추가
 	if (arrAxisY2Field.length > 0) {
 		oValueAxes = {};
-		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
+		oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis2);
 		oValueAxes["id"] = "valueaxis" + "y2";
-		oValueAxes["opposite"] = true;					// 축 오른쪽에표시
-		delete oValueAxes["boardlinevisible"];			// 라인제거
+		oValueAxes["titletext"] = this.lfn_Trim(arrAxisTitleText[2]);
 		
 		arrValueAxes.push(oValueAxes);
 	}
@@ -494,6 +505,13 @@ fn_GetSeries = function(arrSeriesField)
 		oSeries["id"] = this.lfn_GetCompId("series" + " " + oField.id);
 		oSeries["titletext"] = oField.label;
 		oSeries["valuecolumn"] = "bind:" + oField.id;
+		
+		// [BarChart] 시리즈 색상처리
+		if (nCount == 1)	{				// 시리즈 1개
+			oSeries["barfillstyle"] = this.arrBaseChartColor.toString();
+		} else {
+			oSeries["barfillstyle"] = this.lfn_GetChartColor(i);
+		}
 		
 		// 데이터 출력설정
 		if (sItemTextPosition == "none") {

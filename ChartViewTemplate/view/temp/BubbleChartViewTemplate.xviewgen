@@ -24,6 +24,7 @@ include "view_lib::chart.xjs";
 /************************************************************************************************
  * 변수 선언 영역
  ************************************************************************************************/
+this.SERIES_LINE_STYLE = "1px solid";				// 시리즈 선 스타일
 /************************************************************************************************
  * Nexacro Studio 호출 필수 FUNCTION 영역
  ************************************************************************************************/
@@ -178,6 +179,18 @@ fn_GetViewAttributeList = function() {
                                 "defaultvalue": "rightcenter",
                                 "enumlist" : ["none", "topleft", "topcenter", "topright", "bottomleft", "bottomcenter", "bottomright", "lefttop", "leftcenter", "leftbottom", "righttop", "rightcenter", "rightbottom"],
                                 "description": "범례 표시 위치"
+                            }
+							, {									
+                                "id": "xaxistitletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "X축 타이틀 Text"									
+                            }
+							, {									
+                                "id": "yaxistitletext",									
+                                "edittype": "String",											
+                                "defaultvalue": "",									
+                                "description": "X축 타이틀 Text"									
                             }
 							, {
                                 "id": "itemtextposition",		// [BubbleChart]
@@ -384,6 +397,9 @@ fn_GetModel = function(){
 // [BubbleChart] 데이터 축 설정
 fn_GetValueAxes = function(oBubbleField,nCount)
 {
+	var sXAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.xaxistitletext);
+	var sYAxisTitleText = this.lfn_IsNullEmpty(this.oGenerationAttr.attributes.yaxistitletext);
+	
 	var arrValueAxes = new Array();
 	var oValueAxes;
 	
@@ -405,12 +421,12 @@ fn_GetValueAxes = function(oBubbleField,nCount)
 	// x축 추가
 	oValueAxes = {};
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
-	oValueAxes["id"] = "valueaxis" + "x";
+	oValueAxes["id"]		= "valueaxis" + "x";
+	oValueAxes["titletext"]	= this.lfn_Trim(sXAxisTitleText);
 	
 	if (oFieldX == undefined) {
 		this.lfn_Log("seriesx가 설정되지 않았습니다.","error");
 	} else {
-		oValueAxes["titletext"] = oFieldX.label;			// [BubbleChart] 축 명칭은 Field label로 설정
 	}
 	
 	arrValueAxes.push(oValueAxes);
@@ -419,11 +435,11 @@ fn_GetValueAxes = function(oBubbleField,nCount)
 	oValueAxes = {};
 	oValueAxes = this.lfn_CloneObject(this.oBaseValueaxis);
 	oValueAxes["id"] = "valueaxis" + "y";
+	oValueAxes["titletext"]	= this.lfn_Trim(sYAxisTitleText);
 
 	if (oFieldY == undefined) {
 		this.lfn_Log("seriesy가 설정되지 않았습니다.","error");
 	} else {
-		oValueAxes["titletext"] = oFieldY.label;			// [BubbleChart] 축 명칭은 Field label로 설정
 	}
 	arrValueAxes.push(oValueAxes);
 
@@ -473,6 +489,10 @@ fn_GetSeries = function(oBubbleField,nCount)
 		oSeries["titletext"] = sSeriesName;
 		oSeries["valuecolumn"] = "bind:" + oFieldSeriesX.id;
 		oSeries["value2column"] = "bind:" + oFieldSeriesY.id;
+		
+		// [BubbleChart] 시리즈 색상처리
+		oSeries["fillstyle"] = this.lfn_GetChartColor(i);
+		oSeries["linestyle"] = this.SERIES_LINE_STYLE + " " + this.lfn_GetChartColor(i);
 		
 		if (oFieldSeriesB != undefined) {
 			oSeries["value3column"] = "bind:" + oFieldSeriesB.id;
